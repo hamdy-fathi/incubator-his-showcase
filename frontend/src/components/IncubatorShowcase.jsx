@@ -1,79 +1,60 @@
 'use client';
-import { useEffect, useRef, useState, useCallback } from 'react';
+import { useEffect, useRef, useState, useMemo, Suspense } from 'react';
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
-import { Environment, Html } from '@react-three/drei';
+import { Environment, Html, useGLTF, ContactShadows } from '@react-three/drei';
 import * as THREE from 'three';
 import {
   Eye, Cpu, ShieldCheck, ClipboardList,
   ChevronDown, ArrowDown
 } from 'lucide-react';
-import { getModel } from '@/lib/modelCache';
 
-/* ═══════════════ 3D Scene Inner Component ═══════════════ */
+/* ═══════════════ 3D Scene ═══════════════ */
 
 function IncubatorScene({ cameraTargets, modelRotation, zoomValue, mouseX }) {
   const groupRef = useRef();
   const modelRef = useRef();
   const { camera } = useThree();
-  const [model, setModel] = useState(null);
+  const { scene } = useGLTF('/incubator.glb');
 
-  // Load from shared cache
-  useEffect(() => {
-    let cancelled = false;
-    getModel()
-      .then((src) => {
-        if (cancelled) return;
-        const clone = src.clone(true);
-        // Apply subtle green emissive
-        clone.traverse((child) => {
-          if (child.isMesh && child.material) {
-            child.material.emissive = new THREE.Color(0.05, 0.4, 0.25);
-            child.material.emissiveIntensity = 0.1;
-          }
-        });
-        setModel(clone);
-      })
-      .catch((e) => console.error('Showcase model load error:', e));
-    return () => { cancelled = true; };
-  }, []);
+  const model = useMemo(() => {
+    const clone = scene.clone(true);
+    clone.traverse((child) => {
+      if (child.isMesh) {
+        if (child.material) {
+          child.material = child.material.clone();
+        }
+        child.castShadow = true;
+        child.receiveShadow = true;
+      }
+    });
+    return clone;
+  }, [scene]);
 
-  // Every frame: lerp camera + model rotation
   useFrame(() => {
     if (!groupRef.current) return;
 
-    // Mouse parallax on parent group
-    const targetMouseY = mouseX.current * 0.3;
+    // Mouse parallax
+    const targetMouseY = (mouseX?.current || 0) * 0.3;
     groupRef.current.rotation.y += (targetMouseY - groupRef.current.rotation.y) * 0.05;
 
-    // GSAP-driven model rotation on child
-    if (modelRef.current) {
+    // GSAP-driven model rotation
+    if (modelRef.current && modelRotation?.current !== undefined) {
       modelRef.current.rotation.y += (modelRotation.current - modelRef.current.rotation.y) * 0.08;
     }
 
-    // Camera position lerp
+    // Camera lerp
     const ct = cameraTargets.current;
     camera.position.x += (ct.x - camera.position.x) * 0.06;
     camera.position.y += (ct.y - camera.position.y) * 0.06;
     camera.position.z += (ct.z - camera.position.z) * 0.06;
 
     // Zoom
-    camera.zoom += (zoomValue.current - camera.zoom) * 0.06;
-    camera.updateProjectionMatrix();
+    if (zoomValue?.current !== undefined) {
+      camera.zoom += (zoomValue.current - camera.zoom) * 0.06;
+      camera.updateProjectionMatrix();
+    }
     camera.lookAt(0, 0, 0);
   });
-
-  if (!model) {
-    return (
-      <Html center>
-        <div style={{
-          background: '#222', border: '1px solid #333', borderRadius: '8px',
-          padding: '16px 24px', color: '#4fc3f7', fontSize: '0.85rem',
-        }}>
-          Loading 3D Model...
-        </div>
-      </Html>
-    );
-  }
 
   return (
     <group ref={groupRef}>
@@ -81,6 +62,19 @@ function IncubatorScene({ cameraTargets, modelRotation, zoomValue, mouseX }) {
         <primitive object={model} />
       </group>
     </group>
+  );
+}
+
+function LoadingFallback() {
+  return (
+    <Html center>
+      <div style={{
+        background: '#222', border: '1px solid #333', borderRadius: '8px',
+        padding: '16px 24px', color: '#4fc3f7', fontSize: '0.85rem',
+      }}>
+        Loading 3D Model...
+      </div>
+    </Html>
   );
 }
 
@@ -137,7 +131,6 @@ const SECTIONS = [
   },
 ];
 
-// Camera poses per section (position xyz + zoom)
 const CAMERA_POSES = [
   { x: 4, y: 3, z: 4, zoom: 1.0, rotation: 0 },
   { x: 5, y: 2, z: 2, zoom: 1.4, rotation: Math.PI * 0.25 },
@@ -148,13 +141,12 @@ const CAMERA_POSES = [
 
 /* ═══════════════ Main Showcase Component ═══════════════ */
 
-export default function IncubatorShowcase() {
+export default function IncubatorShowcase({ active, cameraTargets, modelRotation, zoomValue }) {
   const showcaseRef = useRef(null);
-  const cameraTargets = useRef({ x: 4, y: 3, z: 4 });
-  const modelRotation = useRef(0);
-  const zoomValue = useRef(1.0);
   const mouseX = useRef(0);
   const [mounted, setMounted] = useState(false);
+
+  useEffect(() => { setMounted(true); }, []);
 
   // Mouse tracking
   useEffect(() => {
@@ -165,16 +157,13 @@ export default function IncubatorShowcase() {
     return () => window.removeEventListener('mousemove', handleMouseMove);
   }, []);
 
-  // Mount flag
-  useEffect(() => { setMounted(true); }, []);
-
   // GSAP ScrollTrigger setup
   useEffect(() => {
     if (!mounted || !showcaseRef.current) return;
-    let gsapModule, ScrollTriggerPlugin;
+    let ScrollTriggerPlugin;
 
     async function initScrollTrigger() {
-      gsapModule = (await import('gsap')).default || (await import('gsap'));
+      const gsapModule = (await import('gsap')).default || (await import('gsap'));
       const gsap = gsapModule.gsap || gsapModule;
       const stMod = await import('gsap/ScrollTrigger');
       ScrollTriggerPlugin = stMod.ScrollTrigger;
@@ -183,12 +172,9 @@ export default function IncubatorShowcase() {
       const container = showcaseRef.current;
       if (!container) return;
 
-      // Create timelines for each section
       SECTIONS.forEach((section, i) => {
         const triggerEl = container.querySelector(`.${section.id}-move`);
         if (!triggerEl) return;
-
-        const from = CAMERA_POSES[i];
         const to = CAMERA_POSES[i + 1];
 
         gsap.timeline({
@@ -205,7 +191,6 @@ export default function IncubatorShowcase() {
           .to(modelRotation, { current: to.rotation }, 'same');
       });
 
-      // Progress bars
       container.querySelectorAll('.showcase-section').forEach((section) => {
         const progressBar = section.querySelector('.sc-progress-bar');
         const progressWrapper = section.querySelector('.sc-progress-wrapper');
@@ -224,10 +209,8 @@ export default function IncubatorShowcase() {
         });
       });
 
-      // Border radius scrubs
       container.querySelectorAll('.showcase-section').forEach((section) => {
         const isRight = section.classList.contains('right');
-
         gsap.to(section, {
           borderTopLeftRadius: isRight ? '0rem' : '1rem',
           borderBottomLeftRadius: isRight ? '0rem' : '1rem',
@@ -252,13 +235,13 @@ export default function IncubatorShowcase() {
         ScrollTriggerPlugin.getAll().forEach(st => st.kill());
       }
     };
-  }, [mounted]);
+  }, [mounted, cameraTargets, modelRotation, zoomValue]);
 
   if (!mounted) return null;
 
   return (
     <div ref={showcaseRef} className="showcase-wrapper">
-      {/* Transition Arrow */}
+      {/* Transition */}
       <div className="showcase-hero">
         <div className="showcase-hero-content">
           <ChevronDown size={20} className="showcase-chevron" />
@@ -268,27 +251,37 @@ export default function IncubatorShowcase() {
         </div>
       </div>
 
-      {/* Fixed WebGL Canvas */}
-      <div className="showcase-experience">
-        <Canvas
-          camera={{ position: [4, 3, 4], fov: 35, near: 0.1, far: 100 }}
-          shadows
-          gl={{ antialias: true, toneMapping: THREE.ACESFilmicToneMapping, toneMappingExposure: 1.1 }}
-        >
-          <color attach="background" args={['#111111']} />
-          <ambientLight intensity={0.4} />
-          <directionalLight position={[5, 8, 5]} intensity={1.0} castShadow />
-          <pointLight position={[-4, 5, -3]} intensity={0.3} color="#42a5f5" />
-          <pointLight position={[3, 1, 4]} intensity={0.2} color="#4caf50" />
-          <IncubatorScene
-            cameraTargets={cameraTargets}
-            modelRotation={modelRotation}
-            zoomValue={zoomValue}
-            mouseX={mouseX}
-          />
-          <Environment preset="city" />
-        </Canvas>
-      </div>
+      {/* Fixed WebGL Canvas — only mounts when showcase is in view */}
+      {active && (
+        <div className="showcase-experience">
+          <Canvas
+            camera={{ position: [4, 3, 4], fov: 35, near: 0.1, far: 100 }}
+            shadows
+            gl={{
+              antialias: true,
+              toneMapping: THREE.ACESFilmicToneMapping,
+              toneMappingExposure: 1.2,
+              powerPreference: 'high-performance',
+            }}
+          >
+            <color attach="background" args={['#111111']} />
+            <ambientLight intensity={0.5} />
+            <directionalLight position={[5, 8, 5]} intensity={1.0} castShadow shadow-mapSize={[1024, 1024]} />
+            <pointLight position={[-4, 5, -3]} intensity={0.4} color="#42a5f5" />
+            <pointLight position={[3, 1, 4]} intensity={0.2} color="#4caf50" />
+            <Suspense fallback={<LoadingFallback />}>
+              <IncubatorScene
+                cameraTargets={cameraTargets}
+                modelRotation={modelRotation}
+                zoomValue={zoomValue}
+                mouseX={mouseX}
+              />
+              <Environment preset="city" />
+            </Suspense>
+            <ContactShadows position={[0, -2.0, 0]} opacity={0.3} scale={10} blur={2} />
+          </Canvas>
+        </div>
+      )}
 
       {/* Scrollable HTML overlay */}
       <div className="showcase-page">
@@ -296,17 +289,11 @@ export default function IncubatorShowcase() {
           const Icon = section.icon;
           return (
             <div key={section.id}>
-              {/* Invisible tall trigger spacer */}
               <div className={`${section.id}-move section-margin`}></div>
-
-              {/* Content section */}
               <section className={`showcase-section ${section.id}-section ${section.side}`}>
-                {/* Progress bar */}
                 <div className={`sc-progress-wrapper sc-progress-${section.side}`}>
                   <div className="sc-progress-bar"></div>
                 </div>
-
-                {/* Content */}
                 <div className="sc-content">
                   <div className="sc-section-number">0{i + 1}</div>
                   <div className="sc-icon-wrap">
@@ -327,8 +314,6 @@ export default function IncubatorShowcase() {
             </div>
           );
         })}
-
-        {/* Bottom spacer */}
         <div style={{ height: '50vh' }}></div>
       </div>
     </div>

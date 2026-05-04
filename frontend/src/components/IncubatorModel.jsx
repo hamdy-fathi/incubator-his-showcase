@@ -4,7 +4,6 @@ import { Canvas, useFrame } from '@react-three/fiber';
 import { OrbitControls, Environment, ContactShadows, Html, useGLTF } from '@react-three/drei';
 import * as THREE from 'three';
 import { Thermometer, Droplets } from 'lucide-react';
-import { getModel } from '@/lib/modelCache';
 
 function getStatusColor(status) {
   switch (status) {

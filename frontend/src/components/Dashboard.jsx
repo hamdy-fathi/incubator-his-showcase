@@ -8,7 +8,8 @@ import { TemperatureChart, HumidityChart } from '@/components/Charts';
 import AlertPanel from '@/components/AlertPanel';
 import RemoteControl from '@/components/RemoteControl';
 import { useState } from 'react';
-import { HeartPulse, Wifi, WifiOff, Clock, Thermometer, Droplets } from 'lucide-react';
+import { HeartPulse, Wifi, WifiOff, Clock, Thermometer, Droplets, LogOut, User } from 'lucide-react';
+import { useAuth } from '@/contexts/AuthContext';
 import { useIncubatorData } from '@/hooks/useIncubatorData';
 
 /* ═══════ 3D Model (uses useGLTF — cached globally) ═══════ */
@@ -104,7 +105,8 @@ function LoadingFallback() {
 
 /* ═══════ Dashboard Component ═══════ */
 
-export default function Dashboard({ showCanvas = true }) {
+export default function Dashboard({ showCanvas = true, user }) {
+  const { logout } = useAuth();
   const {
     latest,
     history,
@@ -147,6 +149,17 @@ export default function Dashboard({ showCanvas = true }) {
             <Clock size={12} />
             {currentTime}
           </div>
+          {user && (
+            <div className="header-user">
+              <div className="header-user-info">
+                <span className="header-user-name">{user.fullName}</span>
+                <span className="header-user-role">{user.role}</span>
+              </div>
+              <button className="header-logout" onClick={logout} title="Sign out">
+                <LogOut size={14} />
+              </button>
+            </div>
+          )}
         </div>
       </header>
 
@@ -233,7 +246,9 @@ export default function Dashboard({ showCanvas = true }) {
 
           <AlertPanel alerts={alerts} onClear={clearAlerts} />
 
-          <RemoteControl settings={settings} onUpdate={updateSettings} />
+          {(user?.role === 'admin' || user?.role === 'technician') && (
+            <RemoteControl settings={settings} onUpdate={updateSettings} />
+          )}
         </div>
       </div>
     </div>

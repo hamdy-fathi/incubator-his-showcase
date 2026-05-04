@@ -5,6 +5,7 @@ import { ThrottlerModule } from '@nestjs/throttler';
 import { IncubatorModule } from './incubator/incubator.module';
 import { AuthModule } from './auth/auth.module';
 import { IncubatorData } from './incubator/incubator.entity';
+import { User } from './auth/user.entity';
 
 @Module({
   imports: [
@@ -19,8 +20,8 @@ import { IncubatorData } from './incubator/incubator.entity';
         username: configService.get<string>('DB_USERNAME', 'postgres'),
         password: configService.get<string>('DB_PASSWORD', ''),
         database: configService.get<string>('DB_DATABASE', 'incubator'),
-        entities: [IncubatorData],
-        synchronize: true, // Auto-create tables in development
+        entities: [IncubatorData, User],
+        synchronize: true,
       }),
     }),
     ThrottlerModule.forRoot([

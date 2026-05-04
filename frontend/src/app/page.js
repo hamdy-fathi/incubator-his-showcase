@@ -1,9 +1,11 @@
 'use client';
 import { useRef, useState, useEffect } from 'react';
+import { useAuth } from '@/contexts/AuthContext';
 import Dashboard from '@/components/Dashboard';
 import IncubatorShowcase from '@/components/IncubatorShowcase';
 
 export default function HomePage() {
+  const { user, loading } = useAuth();
   const [showShowcase, setShowShowcase] = useState(false);
 
   // Camera refs driven by GSAP in IncubatorShowcase
@@ -14,17 +16,20 @@ export default function HomePage() {
   // Simple scroll-based mode switch — dashboard canvas until scrolled past it
   useEffect(() => {
     function onScroll() {
-      const threshold = window.innerHeight * 0.7; // 80% of dashboard height
+      const threshold = window.innerHeight * 0.7;
       setShowShowcase(window.scrollY > threshold);
     }
     window.addEventListener('scroll', onScroll, { passive: true });
-    onScroll(); // check initial position
+    onScroll();
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
+  // Show nothing while auth is loading or if not authenticated
+  if (loading || !user) return null;
+
   return (
     <>
-      <Dashboard showCanvas={!showShowcase} />
+      <Dashboard showCanvas={!showShowcase} user={user} />
 
       <IncubatorShowcase
         active={showShowcase}

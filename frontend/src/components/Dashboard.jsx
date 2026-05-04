@@ -35,6 +35,19 @@ function IncubatorGLB({ status }) {
 
   const model = useMemo(() => scene.clone(true), [scene]);
 
+  // Auto-fit: compute bounding box, scale to target size, center
+  const { scale, offset } = useMemo(() => {
+    const box = new THREE.Box3().setFromObject(model);
+    const size = new THREE.Vector3();
+    const center = new THREE.Vector3();
+    box.getSize(size);
+    box.getCenter(center);
+    const maxDim = Math.max(size.x, size.y, size.z);
+    const targetSize = 3; // units
+    const s = maxDim > 0 ? targetSize / maxDim : 1;
+    return { scale: s, offset: center.multiplyScalar(-s) };
+  }, [model]);
+
   useEffect(() => {
     model.traverse((child) => {
       if (child.isMesh) {
@@ -63,8 +76,10 @@ function IncubatorGLB({ status }) {
   });
 
   return (
-    <group ref={groupRef} position={[0, -0.5, 0]}>
-      <primitive object={model} />
+    <group ref={groupRef}>
+      <group scale={scale} position={[offset.x, offset.y, offset.z]}>
+        <primitive object={model} />
+      </group>
     </group>
   );
 }

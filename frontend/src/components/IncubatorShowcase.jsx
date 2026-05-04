@@ -30,6 +30,19 @@ function IncubatorScene({ cameraTargets, modelRotation, zoomValue, mouseX }) {
     return clone;
   }, [scene]);
 
+  // Auto-fit: compute bounding box, scale to target size, center
+  const { scale, offset } = useMemo(() => {
+    const box = new THREE.Box3().setFromObject(model);
+    const size = new THREE.Vector3();
+    const center = new THREE.Vector3();
+    box.getSize(size);
+    box.getCenter(center);
+    const maxDim = Math.max(size.x, size.y, size.z);
+    const targetSize = 3;
+    const s = maxDim > 0 ? targetSize / maxDim : 1;
+    return { scale: s, offset: center.multiplyScalar(-s) };
+  }, [model]);
+
   useFrame(() => {
     if (!groupRef.current) return;
 
@@ -58,7 +71,7 @@ function IncubatorScene({ cameraTargets, modelRotation, zoomValue, mouseX }) {
 
   return (
     <group ref={groupRef}>
-      <group ref={modelRef} position={[0, -0.5, 0]}>
+      <group ref={modelRef} scale={scale} position={[offset.x, offset.y, offset.z]}>
         <primitive object={model} />
       </group>
     </group>

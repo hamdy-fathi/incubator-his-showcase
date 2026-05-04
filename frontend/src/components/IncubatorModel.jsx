@@ -1,9 +1,10 @@
 'use client';
 import { useRef, useMemo, Suspense, useEffect, useState } from 'react';
-import { Canvas, useFrame, useThree } from '@react-three/fiber';
+import { Canvas, useFrame } from '@react-three/fiber';
 import { OrbitControls, Environment, ContactShadows, Html } from '@react-three/drei';
 import * as THREE from 'three';
 import { Thermometer, Droplets } from 'lucide-react';
+import { getModel } from '@/lib/modelCache';
 
 function getStatusColor(status) {
   switch (status) {
@@ -25,95 +26,14 @@ function IncubatorOBJ({ status }) {
   const groupRef = useRef();
   const [model, setModel] = useState(null);
 
-  // Load OBJ + MTL + textures manually (no useLoader caching issues)
+  // Load from shared cache — model is loaded once globally
   useEffect(() => {
     let cancelled = false;
-
-    async function loadModel() {
-      try {
-        // Dynamic imports to avoid SSR issues
-        const { OBJLoader } = await import('three/examples/jsm/loaders/OBJLoader');
-        const { MTLLoader } = await import('three/examples/jsm/loaders/MTLLoader');
-
-        // Load MTL
-        const mtlLoader = new MTLLoader();
-        const materials = await new Promise((resolve, reject) => {
-          mtlLoader.load('/incubator.mtl', resolve, undefined, reject);
-        });
-        materials.preload();
-
-        // Load OBJ with materials
-        const objLoader = new OBJLoader();
-        objLoader.setMaterials(materials);
-        const obj = await new Promise((resolve, reject) => {
-          objLoader.load('/incubator.obj', resolve, undefined, reject);
-        });
-
-        if (cancelled) return;
-
-        // Load PBR textures
-        const texLoader = new THREE.TextureLoader();
-        const loadTex = (path) => new Promise((resolve) => {
-          texLoader.load(path, resolve, undefined, () => resolve(null));
-        });
-
-        const [baseColor, normalMap, roughnessMap, metallicMap, aoMap] = await Promise.all([
-          loadTex('/BaseColor.tga.png'),
-          loadTex('/NormalMap.tga.png'),
-          loadTex('/Roughness.tga.png'),
-          loadTex('/Metallic.tga.png'),
-          loadTex('/AO.tga.png'),
-        ]);
-
-        if (cancelled) return;
-
-        // Configure color spaces
-        if (baseColor) baseColor.colorSpace = THREE.SRGBColorSpace;
-        [normalMap, roughnessMap, metallicMap, aoMap].forEach(tex => {
-          if (tex) tex.colorSpace = THREE.LinearSRGBColorSpace;
-        });
-
-        // Apply PBR materials based on material name
-        obj.traverse((child) => {
-          if (!child.isMesh) return;
-          const matName = child.material?.name || '';
-
-          if (matName === 'blinn2') {
-            child.material = new THREE.MeshStandardMaterial({
-              map: baseColor,
-              normalMap: normalMap,
-              roughnessMap: roughnessMap,
-              metalnessMap: metallicMap,
-              aoMap: aoMap,
-              side: THREE.DoubleSide,
-            });
-          } else if (matName === 'blinn1') {
-            child.material = new THREE.MeshStandardMaterial({
-              color: new THREE.Color(0.0, 0.14, 0.92),
-              normalMap: normalMap,
-              roughness: 0.4,
-              metalness: 0.3,
-              side: THREE.DoubleSide,
-            });
-          } else {
-            child.material = new THREE.MeshStandardMaterial({
-              color: new THREE.Color(0.5, 0.5, 0.5),
-              roughness: 0.6,
-              metalness: 0.2,
-              side: THREE.DoubleSide,
-            });
-          }
-          child.castShadow = true;
-          child.receiveShadow = true;
-        });
-
-        if (!cancelled) setModel(obj);
-      } catch (err) {
-        console.error('Failed to load incubator model:', err);
-      }
-    }
-
-    loadModel();
+    getModel()
+      .then((src) => {
+        if (!cancelled) setModel(src.clone(true));
+      })
+      .catch((err) => console.error('Model load error:', err));
     return () => { cancelled = true; };
   }, []);
 
@@ -139,29 +59,11 @@ function IncubatorOBJ({ status }) {
     }
   });
 
-  // Auto-scale & center
-  const { scale, offset } = useMemo(() => {
-    if (!model) return { scale: 1, offset: new THREE.Vector3() };
-    const box = new THREE.Box3().setFromObject(model);
-    const size = box.getSize(new THREE.Vector3());
-    const center = box.getCenter(new THREE.Vector3());
-    const maxDim = Math.max(size.x, size.y, size.z);
-    const s = 3.2 / maxDim;
-    return {
-      scale: s,
-      offset: new THREE.Vector3(-center.x * s, -center.y * s, -center.z * s),
-    };
-  }, [model]);
-
   if (!model) return null;
 
   return (
-    <group ref={groupRef} position={[0, -0.3, 0]}>
-      <primitive
-        object={model}
-        scale={[scale, scale, scale]}
-        position={[offset.x, offset.y, offset.z]}
-      />
+    <group ref={groupRef} position={[0, -0.5, 0]}>
+      <primitive object={model} />
     </group>
   );
 }

@@ -46,11 +46,11 @@
 }
 
 html, body {
-  height: 100%;
+  min-height: 100%;
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   background: var(--bg-primary);
   color: var(--text-primary);
-  overflow: hidden;
+  overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -87,6 +87,9 @@ html, body {
   flex-direction: column;
   height: 100vh;
   overflow: hidden;
+  position: relative;
+  z-index: 10;
+  background: var(--bg-primary);
 }
 
 /* ========== Header ========== */
@@ -604,4 +607,239 @@ html, body {
   }
   .charts-grid { grid-template-columns: 1fr; }
   .status-row { grid-template-columns: 1fr; }
+}
+
+/* ================================================================
+   SHOWCASE — Scroll-scrubbed 3D product showcase
+   ================================================================ */
+
+.showcase-wrapper {
+  position: relative;
+  width: 100%;
+  z-index: 1;
+}
+
+/* Hero transition strip */
+.showcase-hero {
+  height: 40vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg-primary);
+  border-top: 1px solid var(--border-color);
+  position: relative;
+  z-index: 5;
+}
+
+.showcase-hero-content {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.showcase-hero-title {
+  font-size: 1.6rem;
+  font-weight: 800;
+  color: var(--text-primary);
+  letter-spacing: -0.02em;
+}
+
+.showcase-hero-sub {
+  font-size: 0.8rem;
+  color: var(--text-dim);
+}
+
+.showcase-chevron {
+  color: var(--text-dim);
+  animation: bounceDown 2s infinite;
+}
+
+.showcase-arrow {
+  color: var(--accent);
+  animation: bounceDown 2s infinite 0.3s;
+}
+
+@keyframes bounceDown {
+  0%, 100% { transform: translateY(0); opacity: 0.5; }
+  50% { transform: translateY(6px); opacity: 1; }
+}
+
+/* Fixed WebGL canvas — behind scrolling content */
+.showcase-experience {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 2;
+  pointer-events: none;
+}
+
+.showcase-experience canvas {
+  width: 100% !important;
+  height: 100% !important;
+}
+
+/* Scrollable HTML overlay */
+.showcase-page {
+  position: relative;
+  z-index: 3;
+  pointer-events: none;
+  background: transparent;
+}
+
+/* Scroll distance per section — controls scrub duration */
+.section-margin {
+  height: 150rem;
+  width: 100%;
+  background: transparent;
+}
+
+/* ========== Content Sections ========== */
+.showcase-section {
+  position: relative;
+  width: 50%;
+  min-height: 100vh;
+  padding: 60px 50px;
+  display: flex;
+  align-items: center;
+  pointer-events: auto;
+  background: rgba(17, 17, 17, 0.88);
+  border: 1px solid var(--border-color);
+}
+
+.showcase-section.left {
+  margin-left: 0;
+  margin-right: auto;
+  border-radius: 0 1rem 1rem 0;
+  border-left: none;
+}
+
+.showcase-section.right {
+  margin-left: auto;
+  margin-right: 0;
+  border-radius: 1rem 0 0 1rem;
+  border-right: none;
+}
+
+/* ========== Progress Bars ========== */
+.sc-progress-wrapper {
+  position: absolute;
+  top: 0;
+  height: 0;
+  width: 3px;
+  z-index: 100;
+}
+
+.sc-progress-left {
+  right: -1px;
+}
+
+.sc-progress-right {
+  left: -1px;
+}
+
+.sc-progress-bar {
+  height: 100vh;
+  width: 100%;
+  background: var(--accent);
+  transform-origin: top center;
+  transform: scaleY(1);
+  opacity: 0.7;
+}
+
+/* ========== Section Content ========== */
+.sc-content {
+  width: 100%;
+  max-width: 440px;
+}
+
+.sc-section-number {
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 3px;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  margin-bottom: 12px;
+}
+
+.sc-icon-wrap {
+  width: 48px;
+  height: 48px;
+  border-radius: var(--radius-md);
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-color);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--accent);
+  margin-bottom: 20px;
+}
+
+.sc-title {
+  font-size: 1.6rem;
+  font-weight: 800;
+  color: var(--text-primary);
+  line-height: 1.2;
+  margin-bottom: 14px;
+  letter-spacing: -0.02em;
+}
+
+.sc-description {
+  font-size: 0.85rem;
+  line-height: 1.65;
+  color: var(--text-secondary);
+  margin-bottom: 28px;
+}
+
+.sc-stats {
+  display: flex;
+  gap: 16px;
+}
+
+.sc-stat {
+  flex: 1;
+  padding: 14px 12px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  text-align: center;
+}
+
+.sc-stat-value {
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: var(--accent);
+  margin-bottom: 4px;
+  font-variant-numeric: tabular-nums;
+}
+
+.sc-stat-label {
+  font-size: 0.6rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--text-dim);
+  font-weight: 600;
+}
+
+/* ========== Showcase Responsive ========== */
+@media (max-width: 968px) {
+  .showcase-section {
+    width: 100%;
+    border-radius: 0 !important;
+    padding: 40px 24px;
+    border-left: none;
+    border-right: none;
+  }
+  .section-margin {
+    height: 100rem;
+  }
+  .sc-stats {
+    flex-direction: column;
+  }
+  .sc-content {
+    max-width: 100%;
+  }
 }

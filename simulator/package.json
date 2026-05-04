@@ -1,0 +1,10 @@
+{
+  "name": "incubator-simulator",
+  "version": "1.0.0",
+  "description": "Neonatal Incubator Device Simulator",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "dependencies": {}
+}

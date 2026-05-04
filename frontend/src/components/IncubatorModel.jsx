@@ -1,7 +1,7 @@
 'use client';
-import { useRef, useMemo, Suspense, useEffect, useState } from 'react';
+import { useRef, useMemo, Suspense, useEffect } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
-import { OrbitControls, Environment, ContactShadows, Html } from '@react-three/drei';
+import { OrbitControls, Environment, ContactShadows, Html, useGLTF } from '@react-three/drei';
 import * as THREE from 'three';
 import { Thermometer, Droplets } from 'lucide-react';
 import { getModel } from '@/lib/modelCache';
@@ -10,7 +10,7 @@ function getStatusColor(status) {
   switch (status) {
     case 'critical': return new THREE.Color(0.95, 0.15, 0.15);
     case 'warning': return new THREE.Color(0.95, 0.75, 0.1);
-    default: return new THREE.Color(0.1, 0.75, 0.5);
+    default: return new THREE.Color(0, 0, 0); // no emissive tint in normal state
   }
 }
 
@@ -22,27 +22,27 @@ function getEmissiveIntensity(status) {
   }
 }
 
-function IncubatorOBJ({ status }) {
+function IncubatorGLB({ status }) {
   const groupRef = useRef();
-  const [model, setModel] = useState(null);
+  const { scene } = useGLTF('/incubator.glb');
 
-  // Load from shared cache — model is loaded once globally
+  // Clone scene so multiple instances don't share the same object
+  const model = useMemo(() => scene.clone(true), [scene]);
+
+  // Apply shadows to all meshes
   useEffect(() => {
-    let cancelled = false;
-    getModel()
-      .then((src) => {
-        if (!cancelled) setModel(src.clone(true));
-      })
-      .catch((err) => console.error('Model load error:', err));
-    return () => { cancelled = true; };
-  }, []);
+    model.traverse((child) => {
+      if (child.isMesh) {
+        child.castShadow = true;
+        child.receiveShadow = true;
+      }
+    });
+  }, [model]);
 
   // Update emissive on status change
   useEffect(() => {
-    if (!model) return;
     const emissiveColor = getStatusColor(status);
     const intensity = getEmissiveIntensity(status);
-
     model.traverse((child) => {
       if (child.isMesh && child.material) {
         child.material.emissive = emissiveColor.clone();
@@ -59,7 +59,18 @@ function IncubatorOBJ({ status }) {
     }
   });
 
-  if (!model) return null;
+  // Auto-scale & center
+  const { scale, offset } = useMemo(() => {
+    const box = new THREE.Box3().setFromObject(model);
+    const size = box.getSize(new THREE.Vector3());
+    const center = box.getCenter(new THREE.Vector3());
+    const maxDim = Math.max(size.x, size.y, size.z);
+    const s = 3.2 / maxDim;
+    return {
+      scale: s,
+      offset: new THREE.Vector3(-center.x * s, -center.y * s, -center.z * s),
+    };
+  }, [model]);
 
   return (
     <group ref={groupRef} position={[0, -0.5, 0]}>
@@ -112,7 +123,7 @@ export default function IncubatorModel({ status, latest }) {
           />
 
           <Suspense fallback={<LoadingFallback />}>
-            <IncubatorOBJ status={status?.status || 'normal'} />
+            <IncubatorGLB status={status?.status || 'normal'} />
             <Environment preset="city" />
           </Suspense>
 
@@ -155,3 +166,5 @@ export default function IncubatorModel({ status, latest }) {
     </>
   );
 }
+
+useGLTF.preload('/incubator.glb');

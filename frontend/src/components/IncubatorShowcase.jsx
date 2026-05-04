@@ -191,36 +191,16 @@ export default function IncubatorShowcase({ active, cameraTargets, modelRotation
           .to(modelRotation, { current: to.rotation }, 'same');
       });
 
-      container.querySelectorAll('.showcase-section').forEach((section) => {
-        const progressBar = section.querySelector('.sc-progress-bar');
-        const progressWrapper = section.querySelector('.sc-progress-wrapper');
-        if (!progressBar || !progressWrapper) return;
-
-        gsap.from(progressBar, {
-          scaleY: 0,
+      // Card entrance animation
+      container.querySelectorAll('.sc-card').forEach((card) => {
+        gsap.from(card, {
+          y: 40,
+          opacity: 0,
           scrollTrigger: {
-            trigger: section,
-            start: 'top top',
-            end: 'bottom bottom',
+            trigger: card.closest('.sc-scroll-runway'),
+            start: 'top 80%',
+            end: 'top 30%',
             scrub: 0.4,
-            pin: progressWrapper,
-            pinSpacing: false,
-          },
-        });
-      });
-
-      container.querySelectorAll('.showcase-section').forEach((section) => {
-        const isRight = section.classList.contains('right');
-        gsap.to(section, {
-          borderTopLeftRadius: isRight ? '0rem' : '1rem',
-          borderBottomLeftRadius: isRight ? '0rem' : '1rem',
-          borderTopRightRadius: isRight ? '1rem' : '0rem',
-          borderBottomRightRadius: isRight ? '1rem' : '0rem',
-          scrollTrigger: {
-            trigger: section,
-            start: 'top bottom',
-            end: 'top top',
-            scrub: 0.6,
           },
         });
       });
@@ -283,38 +263,39 @@ export default function IncubatorShowcase({ active, cameraTargets, modelRotation
         </div>
       )}
 
-      {/* Scrollable HTML overlay */}
+      {/* Scrollable HTML overlay — sticky stacking cards */}
       <div className="showcase-page">
         {SECTIONS.map((section, i) => {
           const Icon = section.icon;
           return (
-            <div key={section.id}>
-              <div className={`${section.id}-move section-margin`}></div>
-              <section className={`showcase-section ${section.id}-section ${section.side}`}>
-                <div className={`sc-progress-wrapper sc-progress-${section.side}`}>
-                  <div className="sc-progress-bar"></div>
-                </div>
-                <div className="sc-content">
-                  <div className="sc-section-number">0{i + 1}</div>
-                  <div className="sc-icon-wrap">
-                    <Icon size={28} />
+            <div
+              key={section.id}
+              className={`sc-scroll-runway ${section.id}-move`}
+            >
+              <div className={`sc-sticky-card ${section.side}`} style={{ top: `${80 + i * 14}px` }}>
+                <div className={`sc-card sc-card-${i}`}>
+                  <div className="sc-card-top">
+                    <div className="sc-card-badge">
+                      <Icon size={16} />
+                      <span>0{i + 1}</span>
+                    </div>
                   </div>
-                  <h2 className="sc-title">{section.title}</h2>
-                  <p className="sc-description">{section.description}</p>
-                  <div className="sc-stats">
-                    {section.stats.map((stat) => (
-                      <div key={stat.label} className="sc-stat">
-                        <div className="sc-stat-value">{stat.value}</div>
-                        <div className="sc-stat-label">{stat.label}</div>
+                  <h3 className="sc-card-title">{section.title}</h3>
+                  <p className="sc-card-desc">{section.description}</p>
+                  <div className="sc-card-metrics">
+                    {section.stats.map((stat, si) => (
+                      <div key={stat.label} className="sc-metric">
+                        <span className="sc-metric-val">{stat.value}</span>
+                        <span className="sc-metric-lbl">{stat.label}</span>
                       </div>
                     ))}
                   </div>
                 </div>
-              </section>
+              </div>
             </div>
           );
         })}
-        <div style={{ height: '50vh' }}></div>
+        <div style={{ height: '60vh' }}></div>
       </div>
     </div>
   );

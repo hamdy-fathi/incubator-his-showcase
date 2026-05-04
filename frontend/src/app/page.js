@@ -8,7 +8,9 @@ import {
   Activity, Wind, Monitor, Syringe, Stethoscope,
   TrendingUp, AlertTriangle, CheckCircle2, XCircle,
   Thermometer, Droplets, Zap, BarChart3, Calendar,
-  ArrowUpRight, ArrowDownRight
+  ArrowUpRight, ArrowDownRight, CalendarClock, Users,
+  UserRound, Phone, MapPin, Mail, Search,
+  FileText, DollarSign, Download
 } from 'lucide-react';
 
 /* ══════════════ DATA ══════════════ */
@@ -68,6 +70,10 @@ const NAV_ITEMS = [
   { id: 'overview', label: 'Overview', icon: LayoutDashboard },
   { id: 'equipment', label: 'Equipment', icon: Box },
   { id: 'maintenance', label: 'Maintenance', icon: Wrench },
+  { id: 'schedule', label: 'Schedule', icon: CalendarClock },
+  { id: 'patients', label: 'Patients', icon: Users },
+  { id: 'reports', label: 'Reports', icon: FileText },
+  { id: 'billing', label: 'Billing', icon: DollarSign },
 ];
 
 const MAINTENANCE_LOG = [
@@ -77,6 +83,33 @@ const MAINTENANCE_LOG = [
   { id: 4, device: 'Infusion Pump', type: 'Preventive', date: '2026-05-10', status: 'scheduled', tech: 'Ahmed Hassan', notes: 'Flow rate calibration' },
   { id: 5, device: 'Smart Incubator', type: 'Inspection', date: '2026-05-20', status: 'scheduled', tech: 'Sara Ali', notes: 'Quarterly safety inspection' },
   { id: 6, device: 'ECG Monitor', type: 'Corrective', date: '2026-05-02', status: 'in-progress', tech: 'Omar Khaled', notes: 'Lead connector replacement' },
+];
+
+const APPOINTMENTS = [
+  { id: 1, patient: 'Layla Ibrahim', doctor: 'Dr. Nour Sayed', department: 'Pediatrics', date: '2026-05-05', time: '09:00', status: 'confirmed', type: 'Follow-up' },
+  { id: 2, patient: 'Youssef Adel', doctor: 'Dr. Ahmed Farouk', department: 'Neonatology', date: '2026-05-05', time: '09:30', status: 'confirmed', type: 'Consultation' },
+  { id: 3, patient: 'Maryam Khaled', doctor: 'Dr. Nour Sayed', department: 'Pediatrics', date: '2026-05-05', time: '10:00', status: 'waiting', type: 'Check-up' },
+  { id: 4, patient: 'Omar Tarek', doctor: 'Dr. Sara Mostafa', department: 'Cardiology', date: '2026-05-05', time: '10:30', status: 'confirmed', type: 'Follow-up' },
+  { id: 5, patient: 'Hana Mahmoud', doctor: 'Dr. Ahmed Farouk', department: 'Neonatology', date: '2026-05-05', time: '11:00', status: 'cancelled', type: 'Consultation' },
+  { id: 6, patient: 'Ali Hassan', doctor: 'Dr. Sara Mostafa', department: 'Cardiology', date: '2026-05-05', time: '11:30', status: 'confirmed', type: 'New Patient' },
+  { id: 7, patient: 'Salma Wael', doctor: 'Dr. Nour Sayed', department: 'Pediatrics', date: '2026-05-06', time: '09:00', status: 'confirmed', type: 'Follow-up' },
+  { id: 8, patient: 'Kareem Fathi', doctor: 'Dr. Ahmed Farouk', department: 'Neonatology', date: '2026-05-06', time: '10:00', status: 'confirmed', type: 'Check-up' },
+];
+
+const DOCTORS = [
+  { name: 'Dr. Nour Sayed', specialty: 'Pediatrics', status: 'available', patients: 12, nextSlot: '10:00 AM' },
+  { name: 'Dr. Ahmed Farouk', specialty: 'Neonatology', status: 'in-session', patients: 8, nextSlot: '11:30 AM' },
+  { name: 'Dr. Sara Mostafa', specialty: 'Cardiology', status: 'available', patients: 15, nextSlot: '10:30 AM' },
+  { name: 'Dr. Khaled Youssef', specialty: 'Pulmonology', status: 'off-duty', patients: 6, nextSlot: 'Tomorrow' },
+];
+
+const PATIENTS = [
+  { id: 'P-001', name: 'Layla Ibrahim', age: '2 days', gender: 'Female', blood: 'A+', room: 'NICU-3', doctor: 'Dr. Nour Sayed', status: 'admitted', admitDate: '2026-05-03', phone: '+20 100 123 4567', diagnosis: 'Premature birth — respiratory monitoring' },
+  { id: 'P-002', name: 'Youssef Adel', age: '5 days', gender: 'Male', blood: 'O+', room: 'NICU-1', doctor: 'Dr. Ahmed Farouk', status: 'admitted', admitDate: '2026-04-30', phone: '+20 112 987 6543', diagnosis: 'Neonatal jaundice' },
+  { id: 'P-003', name: 'Maryam Khaled', age: '3 months', gender: 'Female', blood: 'B+', room: 'Peds-12', doctor: 'Dr. Nour Sayed', status: 'admitted', admitDate: '2026-05-01', phone: '+20 101 555 4321', diagnosis: 'Bronchiolitis — observation' },
+  { id: 'P-004', name: 'Omar Tarek', age: '8 months', gender: 'Male', blood: 'AB-', room: 'Card-8', doctor: 'Dr. Sara Mostafa', status: 'discharged', admitDate: '2026-04-20', phone: '+20 115 222 8765', diagnosis: 'Congenital heart defect — post-op' },
+  { id: 'P-005', name: 'Hana Mahmoud', age: '1 day', gender: 'Female', blood: 'O-', room: 'NICU-2', doctor: 'Dr. Ahmed Farouk', status: 'critical', admitDate: '2026-05-04', phone: '+20 106 333 2109', diagnosis: 'Very low birth weight — intensive care' },
+  { id: 'P-006', name: 'Ali Hassan', age: '6 months', gender: 'Male', blood: 'A-', room: 'Card-5', doctor: 'Dr. Sara Mostafa', status: 'admitted', admitDate: '2026-05-02', phone: '+20 100 444 7890', diagnosis: 'Arrhythmia evaluation' },
 ];
 
 /* ══════════════ OVERVIEW VIEW ══════════════ */
@@ -333,6 +366,438 @@ function MaintenanceView() {
   );
 }
 
+/* ══════════════ SCHEDULE VIEW ══════════════ */
+
+function ScheduleView() {
+  const [tab, setTab] = useState('today');
+  const todayAppts = APPOINTMENTS.filter(a => a.date === '2026-05-05');
+  const tomorrowAppts = APPOINTMENTS.filter(a => a.date === '2026-05-06');
+  const shown = tab === 'today' ? todayAppts : tomorrowAppts;
+
+  return (
+    <div className="sch-view">
+      {/* Doctor cards */}
+      <div className="sch-docs">
+        {DOCTORS.map((doc) => (
+          <div key={doc.name} className="sch-doc-card">
+            <div className="sch-doc-avatar">
+              {doc.name.split(' ').pop().charAt(0)}
+            </div>
+            <div className="sch-doc-info">
+              <span className="sch-doc-name">{doc.name}</span>
+              <span className="sch-doc-spec">{doc.specialty}</span>
+            </div>
+            <div className="sch-doc-right">
+              <span className={`sch-doc-status ${doc.status}`}>
+                <Circle size={6} fill="currentColor" />
+                {doc.status.replace('-', ' ')}
+              </span>
+              <span className="sch-doc-next">Next: {doc.nextSlot}</span>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* Schedule tabs + table */}
+      <div className="sch-table-wrap">
+        <div className="sch-table-header">
+          <h3 className="ov-section-title" style={{ margin: 0 }}>Appointments</h3>
+          <div className="sch-tabs">
+            <button className={`sch-tab ${tab === 'today' ? 'active' : ''}`} onClick={() => setTab('today')}>
+              Today ({todayAppts.length})
+            </button>
+            <button className={`sch-tab ${tab === 'tomorrow' ? 'active' : ''}`} onClick={() => setTab('tomorrow')}>
+              Tomorrow ({tomorrowAppts.length})
+            </button>
+          </div>
+        </div>
+
+        <table className="mt-table">
+          <thead>
+            <tr>
+              <th>Time</th>
+              <th>Patient</th>
+              <th>Doctor</th>
+              <th>Department</th>
+              <th>Type</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            {shown.map((a) => (
+              <tr key={a.id}>
+                <td className="sch-time">{a.time}</td>
+                <td className="mt-device">{a.patient}</td>
+                <td>{a.doctor}</td>
+                <td>{a.department}</td>
+                <td><span className="mt-type-badge preventive">{a.type}</span></td>
+                <td>
+                  <span className={`mt-status-badge ${a.status}`}>
+                    {a.status === 'confirmed' && <CheckCircle2 size={11} />}
+                    {a.status === 'waiting' && <Clock size={11} />}
+                    {a.status === 'cancelled' && <XCircle size={11} />}
+                    {a.status}
+                  </span>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+}
+
+/* ══════════════ PATIENTS VIEW ══════════════ */
+
+function PatientsView() {
+  const [search, setSearch] = useState('');
+  const filtered = PATIENTS.filter(p =>
+    p.name.toLowerCase().includes(search.toLowerCase()) ||
+    p.id.toLowerCase().includes(search.toLowerCase()) ||
+    p.doctor.toLowerCase().includes(search.toLowerCase())
+  );
+
+  const admitted = PATIENTS.filter(p => p.status === 'admitted').length;
+  const critical = PATIENTS.filter(p => p.status === 'critical').length;
+  const discharged = PATIENTS.filter(p => p.status === 'discharged').length;
+
+  return (
+    <div className="pt-view">
+      {/* Summary */}
+      <div className="pt-summary">
+        <div className="mt-sum-card">
+          <Users size={18} className="mt-sum-icon" style={{ color: '#42a5f5' }} />
+          <div>
+            <span className="mt-sum-value">{PATIENTS.length}</span>
+            <span className="mt-sum-label">Total Patients</span>
+          </div>
+        </div>
+        <div className="mt-sum-card">
+          <CheckCircle2 size={18} className="mt-sum-icon completed" />
+          <div>
+            <span className="mt-sum-value">{admitted}</span>
+            <span className="mt-sum-label">Admitted</span>
+          </div>
+        </div>
+        <div className="mt-sum-card">
+          <AlertTriangle size={18} className="mt-sum-icon" style={{ color: '#ef5350' }} />
+          <div>
+            <span className="mt-sum-value">{critical}</span>
+            <span className="mt-sum-label">Critical</span>
+          </div>
+        </div>
+        <div className="mt-sum-card">
+          <ArrowUpRight size={18} className="mt-sum-icon" style={{ color: '#4caf50' }} />
+          <div>
+            <span className="mt-sum-value">{discharged}</span>
+            <span className="mt-sum-label">Discharged</span>
+          </div>
+        </div>
+      </div>
+
+      {/* Search + table */}
+      <div className="pt-table-wrap">
+        <div className="pt-table-header">
+          <h3 className="ov-section-title" style={{ margin: 0 }}>Patient Records</h3>
+          <div className="pt-search">
+            <Search size={14} className="pt-search-icon" />
+            <input
+              type="text"
+              placeholder="Search by name, ID, or doctor..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className="pt-search-input"
+            />
+          </div>
+        </div>
+
+        <table className="mt-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Patient</th>
+              <th>Age</th>
+              <th>Gender</th>
+              <th>Blood</th>
+              <th>Room</th>
+              <th>Doctor</th>
+              <th>Diagnosis</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            {filtered.map((p) => (
+              <tr key={p.id}>
+                <td className="pt-id">{p.id}</td>
+                <td className="mt-device">{p.name}</td>
+                <td>{p.age}</td>
+                <td>{p.gender}</td>
+                <td><span className="pt-blood">{p.blood}</span></td>
+                <td className="pt-room">{p.room}</td>
+                <td>{p.doctor}</td>
+                <td className="mt-notes">{p.diagnosis}</td>
+                <td>
+                  <span className={`mt-status-badge ${p.status}`}>
+                    {p.status === 'admitted' && <CheckCircle2 size={11} />}
+                    {p.status === 'critical' && <AlertTriangle size={11} />}
+                    {p.status === 'discharged' && <ArrowUpRight size={11} />}
+                    {p.status}
+                  </span>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+}
+
+/* ══════════════ CSV EXPORT HELPER ══════════════ */
+
+function exportCSV(filename, headers, rows) {
+  const csvContent = [
+    headers.join(','),
+    ...rows.map(row => row.map(cell => `"${String(cell).replace(/"/g, '""')}"`).join(','))
+  ].join('\n');
+  const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = filename;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+/* ══════════════ REPORTS VIEW ══════════════ */
+
+const REPORTS = [
+  { id: 'RPT-001', title: 'Patient Admission Summary', type: 'Clinical', date: '2026-05-04', author: 'Dr. Nour Sayed', status: 'ready' },
+  { id: 'RPT-002', title: 'Device Utilization Report', type: 'Equipment', date: '2026-05-03', author: 'System', status: 'ready' },
+  { id: 'RPT-003', title: 'Monthly Maintenance Log', type: 'Maintenance', date: '2026-05-01', author: 'Ahmed Hassan', status: 'ready' },
+  { id: 'RPT-004', title: 'NICU Incident Report', type: 'Clinical', date: '2026-04-28', author: 'Dr. Ahmed Farouk', status: 'ready' },
+  { id: 'RPT-005', title: 'Quarterly Equipment Audit', type: 'Equipment', date: '2026-04-15', author: 'Sara Ali', status: 'generating' },
+  { id: 'RPT-006', title: 'Staff Shift Coverage Report', type: 'Administrative', date: '2026-04-10', author: 'System', status: 'ready' },
+];
+
+function ReportsView() {
+  function exportPatients() {
+    exportCSV('patient_records.csv',
+      ['ID', 'Name', 'Age', 'Gender', 'Blood Type', 'Room', 'Doctor', 'Status', 'Admit Date', 'Diagnosis'],
+      PATIENTS.map(p => [p.id, p.name, p.age, p.gender, p.blood, p.room, p.doctor, p.status, p.admitDate, p.diagnosis])
+    );
+  }
+
+  function exportMaintenance() {
+    exportCSV('maintenance_log.csv',
+      ['Device', 'Type', 'Date', 'Technician', 'Status', 'Notes'],
+      MAINTENANCE_LOG.map(m => [m.device, m.type, m.date, m.tech, m.status, m.notes])
+    );
+  }
+
+  function exportAppointments() {
+    exportCSV('appointments.csv',
+      ['Patient', 'Doctor', 'Department', 'Date', 'Time', 'Type', 'Status'],
+      APPOINTMENTS.map(a => [a.patient, a.doctor, a.department, a.date, a.time, a.type, a.status])
+    );
+  }
+
+  return (
+    <div className="rpt-view">
+      {/* Quick Export */}
+      <div className="rpt-exports">
+        <h3 className="ov-section-title">Quick Export</h3>
+        <div className="rpt-export-row">
+          <button className="rpt-export-btn" onClick={exportPatients}>
+            <Users size={16} />
+            <div>
+              <span className="rpt-export-name">Patient Records</span>
+              <span className="rpt-export-desc">All patient data as CSV</span>
+            </div>
+            <Download size={14} />
+          </button>
+          <button className="rpt-export-btn" onClick={exportMaintenance}>
+            <Wrench size={16} />
+            <div>
+              <span className="rpt-export-name">Maintenance Log</span>
+              <span className="rpt-export-desc">Service history as CSV</span>
+            </div>
+            <Download size={14} />
+          </button>
+          <button className="rpt-export-btn" onClick={exportAppointments}>
+            <CalendarClock size={16} />
+            <div>
+              <span className="rpt-export-name">Appointments</span>
+              <span className="rpt-export-desc">Schedule data as CSV</span>
+            </div>
+            <Download size={14} />
+          </button>
+        </div>
+      </div>
+
+      {/* Reports Table */}
+      <div className="pt-table-wrap">
+        <h3 className="ov-section-title">Generated Reports</h3>
+        <table className="mt-table">
+          <thead>
+            <tr>
+              <th>Report ID</th>
+              <th>Title</th>
+              <th>Type</th>
+              <th>Date</th>
+              <th>Author</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            {REPORTS.map((r) => (
+              <tr key={r.id}>
+                <td className="pt-id">{r.id}</td>
+                <td className="mt-device">{r.title}</td>
+                <td><span className={`mt-type-badge ${r.type.toLowerCase()}`}>{r.type}</span></td>
+                <td className="mt-date">{r.date}</td>
+                <td>{r.author}</td>
+                <td>
+                  <span className={`mt-status-badge ${r.status}`}>
+                    {r.status === 'ready' && <CheckCircle2 size={11} />}
+                    {r.status === 'generating' && <Clock size={11} />}
+                    {r.status}
+                  </span>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+}
+
+/* ══════════════ BILLING VIEW ══════════════ */
+
+const INVOICES = [
+  { id: 'INV-2026-001', patient: 'Layla Ibrahim', room: 'NICU-3', admitDate: '2026-05-03', days: 2, roomCharge: 3000, labTests: 1500, medications: 800, procedures: 2500, insurance: 'National Health', coverage: 80, status: 'pending' },
+  { id: 'INV-2026-002', patient: 'Youssef Adel', room: 'NICU-1', admitDate: '2026-04-30', days: 5, roomCharge: 7500, labTests: 2200, medications: 1200, procedures: 4000, insurance: 'Private Plus', coverage: 90, status: 'paid' },
+  { id: 'INV-2026-003', patient: 'Maryam Khaled', room: 'Peds-12', admitDate: '2026-05-01', days: 4, roomCharge: 4000, labTests: 900, medications: 600, procedures: 0, insurance: 'National Health', coverage: 80, status: 'pending' },
+  { id: 'INV-2026-004', patient: 'Omar Tarek', room: 'Card-8', admitDate: '2026-04-20', days: 15, roomCharge: 22500, labTests: 5500, medications: 3800, procedures: 18000, insurance: 'Corporate Care', coverage: 95, status: 'paid' },
+  { id: 'INV-2026-005', patient: 'Hana Mahmoud', room: 'NICU-2', admitDate: '2026-05-04', days: 1, roomCharge: 1500, labTests: 2000, medications: 1500, procedures: 3500, insurance: 'National Health', coverage: 80, status: 'pending' },
+  { id: 'INV-2026-006', patient: 'Ali Hassan', room: 'Card-5', admitDate: '2026-05-02', days: 3, roomCharge: 4500, labTests: 1800, medications: 950, procedures: 1200, insurance: 'Private Plus', coverage: 90, status: 'overdue' },
+];
+
+function BillingView() {
+  const totalRevenue = INVOICES.reduce((sum, inv) => sum + inv.roomCharge + inv.labTests + inv.medications + inv.procedures, 0);
+  const totalPaid = INVOICES.filter(i => i.status === 'paid').reduce((sum, inv) => sum + inv.roomCharge + inv.labTests + inv.medications + inv.procedures, 0);
+  const totalPending = INVOICES.filter(i => i.status === 'pending' || i.status === 'overdue').reduce((sum, inv) => sum + inv.roomCharge + inv.labTests + inv.medications + inv.procedures, 0);
+
+  function exportBilling() {
+    exportCSV('billing_report.csv',
+      ['Invoice ID', 'Patient', 'Room', 'Admit Date', 'Days', 'Room Charge', 'Lab Tests', 'Medications', 'Procedures', 'Total', 'Insurance', 'Coverage %', 'Patient Owes', 'Status'],
+      INVOICES.map(inv => {
+        const total = inv.roomCharge + inv.labTests + inv.medications + inv.procedures;
+        const patientOwes = total * (1 - inv.coverage / 100);
+        return [inv.id, inv.patient, inv.room, inv.admitDate, inv.days, inv.roomCharge, inv.labTests, inv.medications, inv.procedures, total, inv.insurance, inv.coverage, patientOwes.toFixed(0), inv.status];
+      })
+    );
+  }
+
+  return (
+    <div className="bill-view">
+      {/* KPIs */}
+      <div className="pt-summary">
+        <div className="mt-sum-card">
+          <DollarSign size={18} className="mt-sum-icon" style={{ color: '#42a5f5' }} />
+          <div>
+            <span className="mt-sum-value">EGP {(totalRevenue / 1000).toFixed(1)}k</span>
+            <span className="mt-sum-label">Total Revenue</span>
+          </div>
+        </div>
+        <div className="mt-sum-card">
+          <CheckCircle2 size={18} className="mt-sum-icon completed" />
+          <div>
+            <span className="mt-sum-value">EGP {(totalPaid / 1000).toFixed(1)}k</span>
+            <span className="mt-sum-label">Collected</span>
+          </div>
+        </div>
+        <div className="mt-sum-card">
+          <Clock size={18} className="mt-sum-icon scheduled" />
+          <div>
+            <span className="mt-sum-value">EGP {(totalPending / 1000).toFixed(1)}k</span>
+            <span className="mt-sum-label">Outstanding</span>
+          </div>
+        </div>
+        <div className="mt-sum-card">
+          <FileText size={18} className="mt-sum-icon" style={{ color: '#ab47bc' }} />
+          <div>
+            <span className="mt-sum-value">{INVOICES.length}</span>
+            <span className="mt-sum-label">Invoices</span>
+          </div>
+        </div>
+      </div>
+
+      {/* Table */}
+      <div className="pt-table-wrap">
+        <div className="pt-table-header">
+          <h3 className="ov-section-title" style={{ margin: 0 }}>Invoices</h3>
+          <button className="rpt-csv-btn" onClick={exportBilling}>
+            <Download size={13} />
+            Export CSV
+          </button>
+        </div>
+        <div style={{ overflowX: 'auto' }}>
+          <table className="mt-table">
+            <thead>
+              <tr>
+                <th>Invoice</th>
+                <th>Patient</th>
+                <th>Room</th>
+                <th>Days</th>
+                <th>Room</th>
+                <th>Labs</th>
+                <th>Meds</th>
+                <th>Procedures</th>
+                <th>Total</th>
+                <th>Insurance</th>
+                <th>Patient Owes</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              {INVOICES.map((inv) => {
+                const total = inv.roomCharge + inv.labTests + inv.medications + inv.procedures;
+                const patientOwes = total * (1 - inv.coverage / 100);
+                return (
+                  <tr key={inv.id}>
+                    <td className="pt-id">{inv.id}</td>
+                    <td className="mt-device">{inv.patient}</td>
+                    <td className="pt-room">{inv.room}</td>
+                    <td>{inv.days}</td>
+                    <td className="bill-amount">{inv.roomCharge.toLocaleString()}</td>
+                    <td className="bill-amount">{inv.labTests.toLocaleString()}</td>
+                    <td className="bill-amount">{inv.medications.toLocaleString()}</td>
+                    <td className="bill-amount">{inv.procedures.toLocaleString()}</td>
+                    <td className="bill-total">{total.toLocaleString()}</td>
+                    <td><span className="bill-insurance">{inv.insurance}</span></td>
+                    <td className="bill-owes">{patientOwes.toLocaleString()}</td>
+                    <td>
+                      <span className={`mt-status-badge ${inv.status}`}>
+                        {inv.status === 'paid' && <CheckCircle2 size={11} />}
+                        {inv.status === 'pending' && <Clock size={11} />}
+                        {inv.status === 'overdue' && <AlertTriangle size={11} />}
+                        {inv.status}
+                      </span>
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 /* ══════════════ MAIN PAGE ══════════════ */
 
 export default function HomePage() {
@@ -414,6 +879,10 @@ export default function HomePage() {
           {view === 'overview' && <OverviewView router={router} />}
           {view === 'equipment' && <EquipmentView router={router} />}
           {view === 'maintenance' && <MaintenanceView />}
+          {view === 'schedule' && <ScheduleView />}
+          {view === 'patients' && <PatientsView />}
+          {view === 'reports' && <ReportsView />}
+          {view === 'billing' && <BillingView />}
         </div>
       </main>
     </div>

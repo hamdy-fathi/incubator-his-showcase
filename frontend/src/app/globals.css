@@ -1140,10 +1140,414 @@ html {
   background: rgba(255, 179, 0, 0.1);
 }
 
+/* ========== Schedule View ========== */
+.sch-view {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.sch-docs {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+}
+
+.sch-doc-card {
+  background: #111114;
+  border: 1px solid #1e1e24;
+  border-radius: 10px;
+  padding: 16px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.sch-doc-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  background: #1a1a22;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #42a5f5;
+  flex-shrink: 0;
+}
+
+.sch-doc-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.sch-doc-name {
+  display: block;
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: #e4e4ea;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.sch-doc-spec {
+  display: block;
+  font-size: 0.55rem;
+  color: #555;
+  margin-top: 1px;
+}
+
+.sch-doc-right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
+  flex-shrink: 0;
+}
+
+.sch-doc-status {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.52rem;
+  font-weight: 600;
+  text-transform: capitalize;
+}
+
+.sch-doc-status.available { color: #4caf50; }
+.sch-doc-status.in-session { color: #ffb300; }
+.sch-doc-status.off-duty { color: #555; }
+
+.sch-doc-next {
+  font-size: 0.5rem;
+  color: #444;
+  font-weight: 500;
+}
+
+.sch-table-wrap {
+  background: #111114;
+  border: 1px solid #1e1e24;
+  border-radius: 10px;
+  padding: 18px;
+}
+
+.sch-table-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.sch-tabs {
+  display: flex;
+  gap: 4px;
+  background: #0a0a0c;
+  border-radius: 6px;
+  padding: 3px;
+}
+
+.sch-tab {
+  padding: 6px 14px;
+  border-radius: 4px;
+  border: none;
+  background: transparent;
+  color: #555;
+  font-size: 0.65rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.sch-tab.active {
+  background: #1e1e24;
+  color: #e4e4ea;
+}
+
+.sch-time {
+  font-weight: 600;
+  color: #42a5f5;
+  font-variant-numeric: tabular-nums;
+}
+
+.mt-status-badge.waiting {
+  color: #ffb300;
+  background: rgba(255, 179, 0, 0.1);
+}
+
+.mt-status-badge.cancelled {
+  color: #ef5350;
+  background: rgba(239, 83, 80, 0.1);
+}
+
+.mt-status-badge.confirmed {
+  color: #4caf50;
+  background: rgba(76, 175, 80, 0.1);
+}
+
+/* ========== Patients View ========== */
+.pt-view {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.pt-summary {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px;
+}
+
+.pt-table-wrap {
+  background: #111114;
+  border: 1px solid #1e1e24;
+  border-radius: 10px;
+  padding: 18px;
+}
+
+.pt-table-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.pt-search {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.pt-search-icon {
+  position: absolute;
+  left: 10px;
+  color: #444;
+  pointer-events: none;
+}
+
+.pt-search-input {
+  padding: 7px 12px 7px 32px;
+  background: #0a0a0c;
+  border: 1px solid #1e1e24;
+  border-radius: 6px;
+  color: #e4e4ea;
+  font-size: 0.68rem;
+  outline: none;
+  width: 240px;
+  transition: border-color 0.15s;
+}
+
+.pt-search-input:focus {
+  border-color: #42a5f5;
+}
+
+.pt-search-input::placeholder {
+  color: #333;
+}
+
+.pt-id {
+  font-size: 0.65rem;
+  font-weight: 600;
+  color: #42a5f5;
+  font-variant-numeric: tabular-nums;
+}
+
+.pt-blood {
+  font-size: 0.62rem;
+  font-weight: 700;
+  color: #ef5350;
+  background: rgba(239, 83, 80, 0.1);
+  padding: 2px 6px;
+  border-radius: 3px;
+}
+
+.pt-room {
+  font-weight: 600;
+  color: #ccc;
+}
+
+.mt-status-badge.admitted {
+  color: #42a5f5;
+  background: rgba(66, 165, 245, 0.1);
+}
+
+.mt-status-badge.critical {
+  color: #ef5350;
+  background: rgba(239, 83, 80, 0.1);
+}
+
+.mt-status-badge.discharged {
+  color: #4caf50;
+  background: rgba(76, 175, 80, 0.1);
+}
+
+/* ========== Reports View ========== */
+.rpt-view {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.rpt-exports {
+  background: #111114;
+  border: 1px solid #1e1e24;
+  border-radius: 10px;
+  padding: 18px;
+}
+
+.rpt-exports .ov-section-title {
+  margin-bottom: 14px;
+}
+
+.rpt-export-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+
+.rpt-export-btn {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  background: #0a0a0c;
+  border: 1px solid #1e1e24;
+  border-radius: 8px;
+  color: #42a5f5;
+  cursor: pointer;
+  transition: all 0.15s;
+  text-align: left;
+}
+
+.rpt-export-btn > div {
+  flex: 1;
+}
+
+.rpt-export-btn:hover {
+  border-color: #2a2a34;
+  background: #0e0e12;
+}
+
+.rpt-export-name {
+  display: block;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #e4e4ea;
+}
+
+.rpt-export-desc {
+  display: block;
+  font-size: 0.55rem;
+  color: #555;
+  margin-top: 2px;
+}
+
+.rpt-csv-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 14px;
+  background: #42a5f5;
+  border: none;
+  border-radius: 6px;
+  color: #fff;
+  font-size: 0.65rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.rpt-csv-btn:hover {
+  background: #1e88e5;
+}
+
+.mt-status-badge.ready {
+  color: #4caf50;
+  background: rgba(76, 175, 80, 0.1);
+}
+
+.mt-status-badge.generating {
+  color: #ffb300;
+  background: rgba(255, 179, 0, 0.1);
+}
+
+.mt-type-badge.clinical {
+  color: #42a5f5;
+  background: rgba(66, 165, 245, 0.1);
+}
+
+.mt-type-badge.equipment {
+  color: #ffb300;
+  background: rgba(255, 179, 0, 0.1);
+}
+
+.mt-type-badge.maintenance {
+  color: #26a69a;
+  background: rgba(38, 166, 154, 0.1);
+}
+
+.mt-type-badge.administrative {
+  color: #ab47bc;
+  background: rgba(171, 71, 188, 0.1);
+}
+
+/* ========== Billing View ========== */
+.bill-view {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.bill-amount {
+  font-variant-numeric: tabular-nums;
+  color: #888;
+}
+
+.bill-total {
+  font-weight: 700;
+  color: #e4e4ea;
+  font-variant-numeric: tabular-nums;
+}
+
+.bill-owes {
+  font-weight: 700;
+  color: #ffb300;
+  font-variant-numeric: tabular-nums;
+}
+
+.bill-insurance {
+  font-size: 0.58rem;
+  font-weight: 600;
+  padding: 3px 8px;
+  border-radius: 4px;
+  color: #26a69a;
+  background: rgba(38, 166, 154, 0.1);
+  white-space: nowrap;
+}
+
+.mt-status-badge.paid {
+  color: #4caf50;
+  background: rgba(76, 175, 80, 0.1);
+}
+
+.mt-status-badge.pending {
+  color: #42a5f5;
+  background: rgba(66, 165, 245, 0.1);
+}
+
+.mt-status-badge.overdue {
+  color: #ef5350;
+  background: rgba(239, 83, 80, 0.1);
+}
+
 @media (max-width: 1100px) {
   .ov-kpi-row { grid-template-columns: repeat(2, 1fr); }
   .ov-charts-row { grid-template-columns: 1fr; }
   .eq-grid { grid-template-columns: repeat(2, 1fr); }
+  .sch-docs { grid-template-columns: repeat(2, 1fr); }
+  .pt-summary { grid-template-columns: repeat(2, 1fr); }
+  .rpt-export-row { grid-template-columns: 1fr; }
 }
 
 @media (max-width: 768px) {
@@ -1154,6 +1558,8 @@ html {
   .ov-kpi-row { grid-template-columns: 1fr; }
   .eq-grid { grid-template-columns: 1fr; }
   .mt-summary { grid-template-columns: 1fr; }
+  .sch-docs { grid-template-columns: 1fr; }
+  .pt-summary { grid-template-columns: 1fr; }
 }
 
 /* ========== Device Hub ========== */

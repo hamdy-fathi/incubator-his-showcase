@@ -45,40 +45,82 @@
   padding: 0;
 }
 
-html, body {
-  height: 100%;
+html,
+body {
+  min-height: 100%;
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  background: var(--bg-primary);
+  background: transparent;
   color: var(--text-primary);
-  overflow: hidden;
+  overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
+/* Root-level dark background behind everything */
+html {
+  background: var(--bg-primary);
+  overflow-y: auto;
+}
+
 /* ========== Scrollbar ========== */
-::-webkit-scrollbar { width: 5px; }
-::-webkit-scrollbar-track { background: var(--bg-secondary); }
-::-webkit-scrollbar-thumb { background: var(--border-color); border-radius: 3px; }
-::-webkit-scrollbar-thumb:hover { background: var(--text-dim); }
+::-webkit-scrollbar {
+  width: 5px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-secondary);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border-color);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--text-dim);
+}
 
 /* ========== Animations ========== */
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(8px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 @keyframes pulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.4; }
+
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.4;
+  }
 }
 
 @keyframes slideIn {
-  from { opacity: 0; transform: translateX(12px); }
-  to { opacity: 1; transform: translateX(0); }
+  from {
+    opacity: 0;
+    transform: translateX(12px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
 }
 
 @keyframes spin {
-  to { transform: rotate(360deg); }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 /* ========== Layout ========== */
@@ -87,6 +129,9 @@ html, body {
   flex-direction: column;
   height: 100vh;
   overflow: hidden;
+  position: relative;
+  z-index: 10;
+  background: var(--bg-primary);
 }
 
 /* ========== Header ========== */
@@ -231,8 +276,13 @@ html, body {
   line-height: 1.1;
 }
 
-.overlay-value.temp { color: var(--chart-temp); }
-.overlay-value.humidity { color: var(--chart-humidity); }
+.overlay-value.temp {
+  color: var(--chart-temp);
+}
+
+.overlay-value.humidity {
+  color: var(--chart-humidity);
+}
 
 .overlay-unit {
   font-size: 0.85rem;
@@ -313,9 +363,20 @@ html, body {
   transition: border-color 0.2s;
 }
 
-.status-card.normal { border-color: #2e5e34; background: var(--status-normal-bg); }
-.status-card.warning { border-color: #5e4a1a; background: var(--status-warning-bg); }
-.status-card.critical { border-color: #5e2828; background: var(--status-critical-bg); }
+.status-card.normal {
+  border-color: #2e5e34;
+  background: var(--status-normal-bg);
+}
+
+.status-card.warning {
+  border-color: #5e4a1a;
+  background: var(--status-warning-bg);
+}
+
+.status-card.critical {
+  border-color: #5e2828;
+  background: var(--status-critical-bg);
+}
 
 .status-icon {
   margin-bottom: 8px;
@@ -329,9 +390,17 @@ html, body {
   height: 22px;
 }
 
-.status-icon.icon-temp svg { color: var(--chart-temp); }
-.status-icon.icon-humidity svg { color: var(--chart-humidity); }
-.status-icon.icon-status svg { color: var(--accent); }
+.status-icon.icon-temp svg {
+  color: var(--chart-temp);
+}
+
+.status-icon.icon-humidity svg {
+  color: var(--chart-humidity);
+}
+
+.status-icon.icon-status svg {
+  color: var(--accent);
+}
 
 .status-label {
   font-size: 0.62rem;
@@ -349,8 +418,13 @@ html, body {
   line-height: 1;
 }
 
-.status-value.temp { color: var(--chart-temp); }
-.status-value.humidity { color: var(--chart-humidity); }
+.status-value.temp {
+  color: var(--chart-temp);
+}
+
+.status-value.humidity {
+  color: var(--chart-humidity);
+}
 
 .status-sub {
   font-size: 0.62rem;
@@ -594,7 +668,10 @@ html, body {
 
 /* ========== Responsive ========== */
 @media (max-width: 1024px) {
-  .main-content { flex-direction: column; }
+  .main-content {
+    flex-direction: column;
+  }
+
   .panel-3d {
     width: 100%;
     min-width: unset;
@@ -602,6 +679,328 @@ html, body {
     border-right: none;
     border-bottom: 1px solid var(--border-color);
   }
-  .charts-grid { grid-template-columns: 1fr; }
-  .status-row { grid-template-columns: 1fr; }
+
+  .charts-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .status-row {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ================================================================
+   SHOWCASE — Scroll-scrubbed 3D product showcase
+   ================================================================ */
+
+.showcase-wrapper {
+  position: relative;
+  width: 100%;
+  z-index: 1;
+}
+
+/* Hero transition strip */
+.showcase-hero {
+  height: 40vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg-primary);
+  border-top: 1px solid var(--border-color);
+  position: relative;
+  z-index: 5;
+}
+
+.showcase-hero-content {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.showcase-hero-title {
+  font-size: 1.6rem;
+  font-weight: 800;
+  color: var(--text-primary);
+  letter-spacing: -0.02em;
+}
+
+.showcase-hero-sub {
+  font-size: 0.8rem;
+  color: var(--text-dim);
+}
+
+.showcase-chevron {
+  color: var(--text-dim);
+  animation: bounceDown 2s infinite;
+}
+
+.showcase-arrow {
+  color: var(--accent);
+  animation: bounceDown 2s infinite 0.3s;
+}
+
+@keyframes bounceDown {
+
+  0%,
+  100% {
+    transform: translateY(0);
+    opacity: 0.5;
+  }
+
+  50% {
+    transform: translateY(6px);
+    opacity: 1;
+  }
+}
+
+/* Fixed WebGL canvas for showcase — behind scrolling content */
+.showcase-experience {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 2;
+  pointer-events: none;
+}
+
+.showcase-experience canvas {
+  width: 100% !important;
+  height: 100% !important;
+}
+
+/* Scrollable HTML overlay */
+.showcase-page {
+  position: relative;
+  z-index: 3;
+  pointer-events: none;
+  background: transparent;
+}
+
+/* ========== Sticky Stacking Cards ========== */
+
+/* Tall scroll runway — one per section, drives the GSAP camera tween */
+.sc-scroll-runway {
+  height: 150rem;
+  width: 100%;
+  position: relative;
+}
+
+/* The card wrapper — pinned by GSAP ScrollTrigger */
+.sc-sticky-card {
+  /* top is set inline for stagger offset */
+  z-index: 5;
+  padding: 0 40px;
+  pointer-events: auto;
+}
+
+/* Left-aligned cards */
+.sc-sticky-card.left {
+  display: flex;
+  justify-content: flex-start;
+}
+
+/* Right-aligned cards */
+.sc-sticky-card.right {
+  display: flex;
+  justify-content: flex-end;
+}
+
+/* ── The Card ── */
+.sc-card {
+  width: 380px;
+  background: #131316;
+  border: 1px solid #1e1e24;
+  border-radius: 12px;
+  padding: 28px 24px 20px;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.5);
+  border-left: 3px solid var(--accent);
+}
+
+/* Per-card accent color variation */
+.sc-card-0 { border-left-color: #42a5f5; }
+.sc-card-1 { border-left-color: #66bb6a; }
+.sc-card-2 { border-left-color: #ffa726; }
+.sc-card-3 { border-left-color: #ab47bc; }
+
+/* Badge: icon + number */
+.sc-card-top {
+  margin-bottom: 16px;
+}
+
+.sc-card-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 5px 12px;
+  background: #1a1a1f;
+  border: 1px solid #252530;
+  border-radius: 6px;
+  color: #888;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  font-variant-numeric: tabular-nums;
+}
+
+.sc-card-badge svg {
+  color: var(--accent);
+  opacity: 0.8;
+}
+
+/* Title */
+.sc-card-title {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #e4e4ea;
+  margin: 0 0 8px;
+  letter-spacing: -0.02em;
+  line-height: 1.3;
+}
+
+/* Description */
+.sc-card-desc {
+  font-size: 0.76rem;
+  line-height: 1.6;
+  color: #777;
+  margin: 0 0 20px;
+}
+
+/* ── Metrics row ── */
+.sc-card-metrics {
+  display: flex;
+  border-top: 1px solid #1e1e24;
+  padding-top: 14px;
+  gap: 0;
+}
+
+.sc-metric {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  padding: 0 6px;
+}
+
+.sc-metric + .sc-metric {
+  border-left: 1px solid #1e1e24;
+}
+
+.sc-metric-val {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #e4e4ea;
+  font-variant-numeric: tabular-nums;
+}
+
+.sc-metric-lbl {
+  font-size: 0.52rem;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  color: #555;
+  font-weight: 600;
+  text-align: center;
+}
+
+/* ========== Showcase Responsive ========== */
+@media (max-width: 968px) {
+  .sc-sticky-card {
+    padding: 0 16px;
+  }
+  .sc-sticky-card.left,
+  .sc-sticky-card.right {
+    justify-content: center;
+  }
+  .sc-card {
+    width: 100%;
+    max-width: 420px;
+  }
+  .sc-scroll-runway {
+    height: 100rem;
+  }
+  .sc-card-metrics {
+    flex-direction: column;
+    gap: 0;
+  }
+  .sc-metric + .sc-metric {
+    border-left: none;
+    border-top: 1px solid #1e1e24;
+    padding-top: 8px;
+    margin-top: 8px;
+  }
+  .sc-finale-sticky {
+    flex-direction: column;
+    gap: 40px;
+    padding: 0 20px;
+  }
+  .finale-num {
+    font-size: 4rem !important;
+  }
+  .finale-title {
+    font-size: 1.8rem !important;
+  }
+}
+
+/* ========== Finale Section ========== */
+.sc-finale-runway {
+  height: 120rem;
+  width: 100%;
+  position: relative;
+}
+
+.sc-finale-sticky {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 60px;
+  pointer-events: none;
+  z-index: 5;
+}
+
+.finale-text-left,
+.finale-text-right {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  pointer-events: auto;
+}
+
+.finale-text-left {
+  align-items: flex-start;
+}
+
+.finale-text-right {
+  align-items: flex-end;
+  text-align: right;
+}
+
+.finale-label {
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  color: #555;
+}
+
+.finale-num {
+  font-size: 5.5rem;
+  font-weight: 900;
+  color: #e4e4ea;
+  line-height: 1;
+  letter-spacing: -0.04em;
+}
+
+.finale-title {
+  font-size: 2.6rem;
+  font-weight: 900;
+  color: #e4e4ea;
+  line-height: 1;
+  letter-spacing: -0.03em;
+  text-transform: uppercase;
 }

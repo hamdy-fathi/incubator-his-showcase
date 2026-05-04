@@ -72,12 +72,8 @@ function IncubatorGLB({ status }) {
   }, [model]);
 
   return (
-    <group ref={groupRef} position={[0, -0.3, 0]}>
-      <primitive
-        object={model}
-        scale={[scale, scale, scale]}
-        position={[offset.x, offset.y, offset.z]}
-      />
+    <group ref={groupRef} position={[0, -0.5, 0]}>
+      <primitive object={model} />
     </group>
   );
 }

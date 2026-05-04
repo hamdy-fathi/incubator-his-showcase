@@ -41,6 +41,7 @@ export function useIncubatorData() {
     async function fetchHistory() {
       try {
         const res = await fetch(`${API_URL}/api/incubator/history?limit=100`);
+        if (!res.ok) return;
         const json = await res.json();
         if (json.success && json.data) {
           setHistory(json.data.reverse());
@@ -50,8 +51,8 @@ export function useIncubatorData() {
             setStatus(getStatus(lastReading.temperature));
           }
         }
-      } catch (e) {
-        console.error('Failed to fetch history:', e);
+      } catch {
+        // Backend not available
       }
     }
     fetchHistory();
@@ -62,12 +63,13 @@ export function useIncubatorData() {
     async function fetchSettings() {
       try {
         const res = await fetch(`${API_URL}/api/incubator/settings`);
+        if (!res.ok) return;
         const json = await res.json();
         if (json.success && json.data) {
           setSettings(json.data);
         }
-      } catch (e) {
-        console.error('Failed to fetch settings:', e);
+      } catch {
+        // Backend not available
       }
     }
     fetchSettings();
@@ -77,8 +79,8 @@ export function useIncubatorData() {
   useEffect(() => {
     const socket = io(WS_URL, {
       transports: ['websocket', 'polling'],
-      reconnectionAttempts: 10,
-      reconnectionDelay: 2000,
+      reconnectionAttempts: 3,
+      reconnectionDelay: 3000,
     });
     socketRef.current = socket;
 
@@ -119,6 +121,7 @@ export function useIncubatorData() {
     pollRef.current = setInterval(async () => {
       try {
         const res = await fetch(`${API_URL}/api/incubator/latest`);
+        if (!res.ok) return;
         const json = await res.json();
         if (json.success && json.data) {
           setLatest(json.data);
@@ -132,8 +135,8 @@ export function useIncubatorData() {
             return prev;
           });
         }
-      } catch (e) {
-        console.error('Polling error:', e);
+      } catch {
+        // Backend not available — silent fallback
       }
     }, 3000);
 

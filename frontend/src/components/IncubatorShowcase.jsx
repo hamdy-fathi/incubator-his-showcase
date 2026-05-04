@@ -192,17 +192,17 @@ export default function IncubatorShowcase({ active, cameraTargets, modelRotation
           .to(modelRotation, { current: to.rotation }, 'same');
       });
 
-      // Card entrance animation
-      container.querySelectorAll('.sc-card').forEach((card) => {
-        gsap.from(card, {
-          y: 40,
-          opacity: 0,
-          scrollTrigger: {
-            trigger: card.closest('.sc-scroll-runway'),
-            start: 'top 80%',
-            end: 'top 30%',
-            scrub: 0.4,
-          },
+      // Pin each card for its scroll runway duration
+      container.querySelectorAll('.sc-sticky-card').forEach((card) => {
+        const runway = card.closest('.sc-scroll-runway');
+        if (!runway) return;
+
+        ScrollTriggerPlugin.create({
+          trigger: card,
+          start: 'top top',
+          end: () => `+=${runway.offsetHeight}`,
+          pin: true,
+          pinSpacing: false,
         });
       });
 

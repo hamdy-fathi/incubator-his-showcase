@@ -788,10 +788,9 @@ html {
   position: relative;
 }
 
-/* The card wrapper — sticky inside its runway */
+/* The card wrapper — pinned by GSAP ScrollTrigger */
 .sc-sticky-card {
-  position: sticky;
-  /* top is set inline: 80px, 94px, 108px, 122px */
+  /* top is set inline for stagger offset */
   z-index: 5;
   padding: 0 40px;
   pointer-events: auto;

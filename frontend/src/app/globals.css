@@ -382,78 +382,36 @@ html {
   gap: 10px;
 }
 
-.status-card {
-  text-align: center;
-  padding: 16px 12px;
-  border-radius: var(--radius-md);
-  border: 1px solid var(--border-color);
-  background: var(--bg-card);
-  transition: border-color 0.2s;
+/* ── New si-card (uses .card base) ── */
+.si-card {
+  /* left border accent set inline per-card */
+  padding-top: 16px;
+  padding-bottom: 16px;
 }
 
-.status-card.normal {
-  border-color: #2e5e34;
-  background: var(--status-normal-bg);
-}
-
-.status-card.warning {
-  border-color: #5e4a1a;
-  background: var(--status-warning-bg);
-}
-
-.status-card.critical {
-  border-color: #5e2828;
-  background: var(--status-critical-bg);
-}
-
-.status-icon {
-  margin-bottom: 8px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.status-icon svg {
-  width: 22px;
-  height: 22px;
-}
-
-.status-icon.icon-temp svg {
-  color: var(--chart-temp);
-}
-
-.status-icon.icon-humidity svg {
-  color: var(--chart-humidity);
-}
-
-.status-icon.icon-status svg {
-  color: var(--accent);
-}
-
-.status-label {
-  font-size: 0.62rem;
-  text-transform: uppercase;
-  letter-spacing: 1.5px;
-  color: var(--text-dim);
-  margin-bottom: 6px;
-  font-weight: 600;
-}
-
-.status-value {
-  font-size: 1.8rem;
+.si-value {
+  font-size: 2rem;
   font-weight: 800;
   font-variant-numeric: tabular-nums;
   line-height: 1;
+  letter-spacing: -0.02em;
+  margin-bottom: 6px;
 }
 
-.status-value.temp {
-  color: var(--chart-temp);
+.si-unit {
+  font-size: 0.9rem;
+  font-weight: 500;
+  opacity: 0.55;
+  margin-left: 2px;
 }
 
-.status-value.humidity {
-  color: var(--chart-humidity);
+.si-sub {
+  font-size: 0.62rem;
+  color: var(--text-dim);
+  margin-top: 4px;
 }
 
+/* keep legacy .status-sub for other uses */
 .status-sub {
   font-size: 0.62rem;
   color: var(--text-dim);
@@ -641,6 +599,18 @@ html {
 .control-slider::-webkit-slider-thumb:hover {
   transform: scale(1.15);
 }
+
+/* Per-slider colour variants */
+.control-slider.slider-temp::-webkit-slider-thumb {
+  background: var(--chart-temp);
+  box-shadow: 0 0 0 3px rgba(239, 83, 80, 0.2);
+}
+
+.control-slider.slider-humidity::-webkit-slider-thumb {
+  background: var(--chart-humidity);
+  box-shadow: 0 0 0 3px rgba(66, 165, 245, 0.2);
+}
+
 
 .control-value {
   font-size: 0.9rem;

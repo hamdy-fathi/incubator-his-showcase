@@ -8,7 +8,7 @@ import { TemperatureChart, HumidityChart } from '@/components/Charts';
 import AlertPanel from '@/components/AlertPanel';
 import RemoteControl from '@/components/RemoteControl';
 import { useState } from 'react';
-import { Activity, Wifi, WifiOff, Clock, Thermometer, Droplets } from 'lucide-react';
+import { HeartPulse, Wifi, WifiOff, Clock, Thermometer, Droplets } from 'lucide-react';
 import { useIncubatorData } from '@/hooks/useIncubatorData';
 
 /* ═══════ 3D Model (uses useGLTF — cached globally) ═══════ */
@@ -116,30 +116,20 @@ export default function Dashboard({ showCanvas = true }) {
       <header className="header">
         <div className="header-left">
           <div className="header-logo">
-            <Activity size={20} strokeWidth={2.5} />
+            <HeartPulse size={18} strokeWidth={2.5} />
           </div>
-          <div>
-            <div className="header-title">Smart Neonatal Incubator</div>
-            <div className="header-subtitle">Real-Time Monitoring System</div>
+          <div className="header-brand">
+            <div className="header-title">Team #3 Project</div>
+            <div className="header-subtitle">Neonatal Monitoring</div>
           </div>
         </div>
         <div className="header-right">
-          <div className="connection-status">
-            <span className={`connection-dot ${connected ? '' : 'disconnected'}`}></span>
-            {connected ? (
-              <>
-                <Wifi size={12} />
-                WebSocket Connected
-              </>
-            ) : (
-              <>
-                <WifiOff size={12} />
-                Polling Mode
-              </>
-            )}
+          <div className={`connection-badge ${connected ? 'online' : 'offline'}`}>
+            <span className="connection-dot"></span>
+            {connected ? 'Live' : 'Offline'}
           </div>
           <div className="header-time">
-            <Clock size={12} style={{ display: 'inline', verticalAlign: '-2px', marginRight: 4 }} />
+            <Clock size={12} />
             {currentTime}
           </div>
         </div>

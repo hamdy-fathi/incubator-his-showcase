@@ -133,10 +133,11 @@ const SECTIONS = [
 
 const CAMERA_POSES = [
   { x: 4, y: 3, z: 4, zoom: 1.0, rotation: 0 },
-  { x: 5, y: 2, z: 2, zoom: 1.4, rotation: Math.PI * 0.25 },
+  { x: 5, y: 2, z: 2, zoom: 1.8, rotation: Math.PI * 0.25 },
   { x: 0, y: 5, z: 3, zoom: 1.7, rotation: Math.PI * 0.5 },
-  { x: -4, y: 2, z: 3, zoom: 1.3, rotation: Math.PI },
-  { x: 4, y: 3, z: 4, zoom: 1.0, rotation: Math.PI * 2 },
+  { x: -4, y: 2, z: 3, zoom: 1.2, rotation: Math.PI },
+  { x: 4, y: 3, z: 4, zoom: 2, rotation: Math.PI * 2 },
+  { x: 4, y: 3, z: 4, zoom: 1.0, rotation: Math.PI * 2.25 }, // finale — centered, slight right turn
 ];
 
 /* ═══════════════ Main Showcase Component ═══════════════ */
@@ -204,6 +205,34 @@ export default function IncubatorShowcase({ active, cameraTargets, modelRotation
           },
         });
       });
+
+      // Finale section — only camera moves to center, text is pinned
+      const finaleEl = container.querySelector('.sc-finale-runway');
+      const finaleSticky = container.querySelector('.sc-finale-sticky');
+      if (finaleEl && finaleSticky) {
+        const finalPose = CAMERA_POSES[CAMERA_POSES.length - 1];
+        gsap.timeline({
+          scrollTrigger: {
+            trigger: finaleEl,
+            start: 'top top',
+            end: 'bottom bottom',
+            scrub: 0.6,
+            invalidateOnRefresh: true,
+          },
+        })
+          .to(cameraTargets.current, { x: finalPose.x, y: finalPose.y, z: finalPose.z }, 'same')
+          .to(zoomValue, { current: finalPose.zoom }, 'same')
+          .to(modelRotation, { current: finalPose.rotation }, 'same');
+
+        // Pin the text in place for the full finale scroll
+        ScrollTriggerPlugin.create({
+          trigger: finaleSticky,
+          start: 'top top',
+          end: () => `+=${finaleEl.offsetHeight}`,
+          pin: true,
+          pinSpacing: false,
+        });
+      }
 
       ScrollTriggerPlugin.refresh();
     }
@@ -295,7 +324,20 @@ export default function IncubatorShowcase({ active, cameraTargets, modelRotation
             </div>
           );
         })}
-        <div style={{ height: '60vh' }}></div>
+        {/* ── Finale section ── */}
+        <div className="sc-finale-runway">
+          <div className="sc-finale-sticky">
+            <div className="finale-text-left">
+              <span className="finale-title">TEAM</span>
+              <span className="finale-num">3</span>
+            </div>
+            <div className="finale-text-right">
+              <span className="finale-title">THE</span>
+              <span className="finale-title">INCUBATOR</span>
+            </div>
+          </div>
+        </div>
+        <div style={{ height: '30vh' }}></div>
       </div>
     </div>
   );

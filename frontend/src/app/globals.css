@@ -932,4 +932,76 @@ html {
     padding-top: 8px;
     margin-top: 8px;
   }
+  .sc-finale-sticky {
+    flex-direction: column;
+    gap: 40px;
+    padding: 0 20px;
+  }
+  .finale-num {
+    font-size: 4rem !important;
+  }
+  .finale-title {
+    font-size: 1.8rem !important;
+  }
+}
+
+/* ========== Finale Section ========== */
+.sc-finale-runway {
+  height: 120rem;
+  width: 100%;
+  position: relative;
+}
+
+.sc-finale-sticky {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 60px;
+  pointer-events: none;
+  z-index: 5;
+}
+
+.finale-text-left,
+.finale-text-right {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  pointer-events: auto;
+}
+
+.finale-text-left {
+  align-items: flex-start;
+}
+
+.finale-text-right {
+  align-items: flex-end;
+  text-align: right;
+}
+
+.finale-label {
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  color: #555;
+}
+
+.finale-num {
+  font-size: 5.5rem;
+  font-weight: 900;
+  color: #e4e4ea;
+  line-height: 1;
+  letter-spacing: -0.04em;
+}
+
+.finale-title {
+  font-size: 2.6rem;
+  font-weight: 900;
+  color: #e4e4ea;
+  line-height: 1;
+  letter-spacing: -0.03em;
+  text-transform: uppercase;
 }

@@ -14,13 +14,13 @@ const CustomTooltip = ({ active, payload, label, unit, color }) => {
   if (active && payload && payload.length) {
     return (
       <div style={{
-        background: '#1a2130',
-        border: '1px solid #2a3344',
+        background: '#222222',
+        border: '1px solid #333333',
         borderRadius: '6px',
         padding: '8px 12px',
         fontSize: '0.78rem',
       }}>
-        <div style={{ color: '#64748b', marginBottom: 3, fontSize: '0.65rem' }}>{formatTime(label)}</div>
+        <div style={{ color: '#666666', marginBottom: 3, fontSize: '0.65rem' }}>{formatTime(label)}</div>
         <div style={{ color, fontWeight: 700, fontSize: '1rem' }}>
           {payload[0].value?.toFixed(1)}{unit}
         </div>
@@ -52,20 +52,20 @@ export function TemperatureChart({ data }) {
           <AreaChart data={chartData} margin={{ top: 5, right: 10, left: -15, bottom: 0 }}>
             <defs>
               <linearGradient id="tempGradient" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor="#f87171" stopOpacity={0.18} />
-                <stop offset="100%" stopColor="#f87171" stopOpacity={0} />
+                <stop offset="0%" stopColor="#ef5350" stopOpacity={0.18} />
+                <stop offset="100%" stopColor="#ef5350" stopOpacity={0} />
               </linearGradient>
             </defs>
-            <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" />
-            <XAxis dataKey="time" tickFormatter={formatTime} stroke="#475569" fontSize={9} tick={{ fill: '#475569' }} />
-            <YAxis domain={[34, 40]} stroke="#475569" fontSize={9} tick={{ fill: '#475569' }} tickFormatter={v => `${v}°`} />
-            <Tooltip content={<CustomTooltip unit="°C" color="#f87171" />} />
-            <ReferenceLine y={38} stroke="#fbbf24" strokeDasharray="4 4" strokeWidth={1} />
-            <ReferenceLine y={36} stroke="#fbbf24" strokeDasharray="4 4" strokeWidth={1} />
+            <CartesianGrid strokeDasharray="3 3" stroke="#2a2a2a" />
+            <XAxis dataKey="time" tickFormatter={formatTime} stroke="#555555" fontSize={9} tick={{ fill: '#555555' }} />
+            <YAxis domain={[34, 40]} stroke="#555555" fontSize={9} tick={{ fill: '#555555' }} tickFormatter={v => `${v}°`} />
+            <Tooltip content={<CustomTooltip unit="°C" color="#ef5350" />} />
+            <ReferenceLine y={38} stroke="#ffb300" strokeDasharray="4 4" strokeWidth={1} />
+            <ReferenceLine y={36} stroke="#ffb300" strokeDasharray="4 4" strokeWidth={1} />
             <Area
               type="monotone"
               dataKey="temperature"
-              stroke="#f87171"
+              stroke="#ef5350"
               strokeWidth={1.5}
               fill="url(#tempGradient)"
               dot={false}
@@ -100,18 +100,18 @@ export function HumidityChart({ data }) {
           <AreaChart data={chartData} margin={{ top: 5, right: 10, left: -15, bottom: 0 }}>
             <defs>
               <linearGradient id="humidityGradient" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor="#38bdf8" stopOpacity={0.18} />
-                <stop offset="100%" stopColor="#38bdf8" stopOpacity={0} />
+                <stop offset="0%" stopColor="#42a5f5" stopOpacity={0.18} />
+                <stop offset="100%" stopColor="#42a5f5" stopOpacity={0} />
               </linearGradient>
             </defs>
-            <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" />
-            <XAxis dataKey="time" tickFormatter={formatTime} stroke="#475569" fontSize={9} tick={{ fill: '#475569' }} />
-            <YAxis domain={[30, 90]} stroke="#475569" fontSize={9} tick={{ fill: '#475569' }} tickFormatter={v => `${v}%`} />
-            <Tooltip content={<CustomTooltip unit="%" color="#38bdf8" />} />
+            <CartesianGrid strokeDasharray="3 3" stroke="#2a2a2a" />
+            <XAxis dataKey="time" tickFormatter={formatTime} stroke="#555555" fontSize={9} tick={{ fill: '#555555' }} />
+            <YAxis domain={[30, 90]} stroke="#555555" fontSize={9} tick={{ fill: '#555555' }} tickFormatter={v => `${v}%`} />
+            <Tooltip content={<CustomTooltip unit="%" color="#42a5f5" />} />
             <Area
               type="monotone"
               dataKey="humidity"
-              stroke="#38bdf8"
+              stroke="#42a5f5"
               strokeWidth={1.5}
               fill="url(#humidityGradient)"
               dot={false}

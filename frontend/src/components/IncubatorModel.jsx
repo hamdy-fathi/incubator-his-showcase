@@ -1,9 +1,7 @@
 'use client';
-import { useRef, useMemo, Suspense, useEffect } from 'react';
-import { Canvas, useFrame, useLoader } from '@react-three/fiber';
+import { useRef, useMemo, Suspense, useEffect, useState } from 'react';
+import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import { OrbitControls, Environment, ContactShadows, Html } from '@react-three/drei';
-import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader';
-import { MTLLoader } from 'three/examples/jsm/loaders/MTLLoader';
 import * as THREE from 'three';
 import { Thermometer, Droplets } from 'lucide-react';
 
@@ -25,54 +23,111 @@ function getEmissiveIntensity(status) {
 
 function IncubatorOBJ({ status }) {
   const groupRef = useRef();
+  const [model, setModel] = useState(null);
 
-  // Load materials then OBJ
-  const materials = useLoader(MTLLoader, '/incubator.mtl');
-  const obj = useLoader(OBJLoader, '/incubator.obj', (loader) => {
-    materials.preload();
-    loader.setMaterials(materials);
-  });
-
-  // Clone the object so we don't mutate the cached version
-  const model = useMemo(() => obj.clone(true), [obj]);
-
-  // Apply emissive coloring based on status
+  // Load OBJ + MTL + textures manually (no useLoader caching issues)
   useEffect(() => {
+    let cancelled = false;
+
+    async function loadModel() {
+      try {
+        // Dynamic imports to avoid SSR issues
+        const { OBJLoader } = await import('three/examples/jsm/loaders/OBJLoader');
+        const { MTLLoader } = await import('three/examples/jsm/loaders/MTLLoader');
+
+        // Load MTL
+        const mtlLoader = new MTLLoader();
+        const materials = await new Promise((resolve, reject) => {
+          mtlLoader.load('/incubator.mtl', resolve, undefined, reject);
+        });
+        materials.preload();
+
+        // Load OBJ with materials
+        const objLoader = new OBJLoader();
+        objLoader.setMaterials(materials);
+        const obj = await new Promise((resolve, reject) => {
+          objLoader.load('/incubator.obj', resolve, undefined, reject);
+        });
+
+        if (cancelled) return;
+
+        // Load PBR textures
+        const texLoader = new THREE.TextureLoader();
+        const loadTex = (path) => new Promise((resolve) => {
+          texLoader.load(path, resolve, undefined, () => resolve(null));
+        });
+
+        const [baseColor, normalMap, roughnessMap, metallicMap, aoMap] = await Promise.all([
+          loadTex('/BaseColor.tga.png'),
+          loadTex('/NormalMap.tga.png'),
+          loadTex('/Roughness.tga.png'),
+          loadTex('/Metallic.tga.png'),
+          loadTex('/AO.tga.png'),
+        ]);
+
+        if (cancelled) return;
+
+        // Configure color spaces
+        if (baseColor) baseColor.colorSpace = THREE.SRGBColorSpace;
+        [normalMap, roughnessMap, metallicMap, aoMap].forEach(tex => {
+          if (tex) tex.colorSpace = THREE.LinearSRGBColorSpace;
+        });
+
+        // Apply PBR materials based on material name
+        obj.traverse((child) => {
+          if (!child.isMesh) return;
+          const matName = child.material?.name || '';
+
+          if (matName === 'blinn2') {
+            child.material = new THREE.MeshStandardMaterial({
+              map: baseColor,
+              normalMap: normalMap,
+              roughnessMap: roughnessMap,
+              metalnessMap: metallicMap,
+              aoMap: aoMap,
+              side: THREE.DoubleSide,
+            });
+          } else if (matName === 'blinn1') {
+            child.material = new THREE.MeshStandardMaterial({
+              color: new THREE.Color(0.0, 0.14, 0.92),
+              normalMap: normalMap,
+              roughness: 0.4,
+              metalness: 0.3,
+              side: THREE.DoubleSide,
+            });
+          } else {
+            child.material = new THREE.MeshStandardMaterial({
+              color: new THREE.Color(0.5, 0.5, 0.5),
+              roughness: 0.6,
+              metalness: 0.2,
+              side: THREE.DoubleSide,
+            });
+          }
+          child.castShadow = true;
+          child.receiveShadow = true;
+        });
+
+        if (!cancelled) setModel(obj);
+      } catch (err) {
+        console.error('Failed to load incubator model:', err);
+      }
+    }
+
+    loadModel();
+    return () => { cancelled = true; };
+  }, []);
+
+  // Update emissive on status change
+  useEffect(() => {
+    if (!model) return;
     const emissiveColor = getStatusColor(status);
     const intensity = getEmissiveIntensity(status);
 
     model.traverse((child) => {
       if (child.isMesh && child.material) {
-        // Handle both single materials and material arrays
-        const mats = Array.isArray(child.material) ? child.material : [child.material];
-        mats.forEach((mat) => {
-          // Upgrade Phong materials to StandardMaterial for emissive support
-          if (!mat.isMeshStandardMaterial) {
-            const upgraded = new THREE.MeshStandardMaterial({
-              map: mat.map || null,
-              normalMap: mat.normalMap || mat.bumpMap || null,
-              color: mat.color ? mat.color.clone() : new THREE.Color(0.7, 0.7, 0.7),
-              roughness: 0.55,
-              metalness: 0.25,
-              side: THREE.DoubleSide,
-            });
-            if (Array.isArray(child.material)) {
-              const idx = child.material.indexOf(mat);
-              child.material[idx] = upgraded;
-            } else {
-              child.material = upgraded;
-            }
-            upgraded.emissive = emissiveColor.clone();
-            upgraded.emissiveIntensity = intensity;
-            upgraded.needsUpdate = true;
-          } else {
-            mat.emissive = emissiveColor.clone();
-            mat.emissiveIntensity = intensity;
-            mat.needsUpdate = true;
-          }
-        });
-        child.castShadow = true;
-        child.receiveShadow = true;
+        child.material.emissive = emissiveColor.clone();
+        child.material.emissiveIntensity = intensity;
+        child.material.needsUpdate = true;
       }
     });
   }, [model, status]);
@@ -86,6 +141,7 @@ function IncubatorOBJ({ status }) {
 
   // Auto-scale & center
   const { scale, offset } = useMemo(() => {
+    if (!model) return { scale: 1, offset: new THREE.Vector3() };
     const box = new THREE.Box3().setFromObject(model);
     const size = box.getSize(new THREE.Vector3());
     const center = box.getCenter(new THREE.Vector3());
@@ -96,6 +152,8 @@ function IncubatorOBJ({ status }) {
       offset: new THREE.Vector3(-center.x * s, -center.y * s, -center.z * s),
     };
   }, [model]);
+
+  if (!model) return null;
 
   return (
     <group ref={groupRef} position={[0, -0.3, 0]}>
@@ -112,11 +170,11 @@ function LoadingFallback() {
   return (
     <Html center>
       <div style={{
-        background: '#1a2130',
+        background: '#222222',
         padding: '16px 24px',
         borderRadius: '8px',
-        border: '1px solid #2a3344',
-        color: '#22d3ee',
+        border: '1px solid #333333',
+        color: '#4fc3f7',
         fontSize: '0.85rem',
         textAlign: 'center',
       }}>
@@ -135,7 +193,7 @@ export default function IncubatorModel({ status, latest }) {
           shadows
           gl={{ antialias: true, toneMapping: THREE.ACESFilmicToneMapping, toneMappingExposure: 1.2 }}
         >
-          <color attach="background" args={['#0b0f19']} />
+          <color attach="background" args={['#111111']} />
 
           <ambientLight intensity={0.5} />
           <directionalLight
@@ -144,11 +202,11 @@ export default function IncubatorModel({ status, latest }) {
             castShadow
             shadow-mapSize={[1024, 1024]}
           />
-          <pointLight position={[-4, 5, -3]} intensity={0.4} color="#38bdf8" />
+          <pointLight position={[-4, 5, -3]} intensity={0.4} color="#42a5f5" />
           <pointLight
             position={[0, 2, 3]}
             intensity={status?.status === 'critical' ? 1.8 : status?.status === 'warning' ? 0.9 : 0.2}
-            color={status?.status === 'critical' ? '#f87171' : status?.status === 'warning' ? '#fbbf24' : '#34d399'}
+            color={status?.status === 'critical' ? '#ef5350' : status?.status === 'warning' ? '#ffb300' : '#4caf50'}
           />
 
           <Suspense fallback={<LoadingFallback />}>

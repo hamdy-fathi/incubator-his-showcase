@@ -952,8 +952,13 @@ html {
   text-transform: capitalize;
 }
 
-.ov-ind-status.online { color: #4caf50; }
-.ov-ind-status.offline { color: #555; }
+.ov-ind-status.online {
+  color: #4caf50;
+}
+
+.ov-ind-status.offline {
+  color: #555;
+}
 
 /* ========== Equipment View ========== */
 .eq-view {
@@ -1019,9 +1024,17 @@ html {
   flex-shrink: 0;
 }
 
-.mt-sum-icon.completed { color: #4caf50; }
-.mt-sum-icon.scheduled { color: #42a5f5; }
-.mt-sum-icon.in-progress { color: #ffb300; }
+.mt-sum-icon.completed {
+  color: #4caf50;
+}
+
+.mt-sum-icon.scheduled {
+  color: #42a5f5;
+}
+
+.mt-sum-icon.in-progress {
+  color: #ffb300;
+}
 
 .mt-sum-value {
   display: block;
@@ -1216,9 +1229,17 @@ html {
   text-transform: capitalize;
 }
 
-.sch-doc-status.available { color: #4caf50; }
-.sch-doc-status.in-session { color: #ffb300; }
-.sch-doc-status.off-duty { color: #555; }
+.sch-doc-status.available {
+  color: #4caf50;
+}
+
+.sch-doc-status.in-session {
+  color: #ffb300;
+}
+
+.sch-doc-status.off-duty {
+  color: #555;
+}
 
 .sch-doc-next {
   font-size: 0.5rem;
@@ -1420,7 +1441,7 @@ html {
   text-align: left;
 }
 
-.rpt-export-btn > div {
+.rpt-export-btn>div {
   flex: 1;
 }
 
@@ -1542,24 +1563,71 @@ html {
 }
 
 @media (max-width: 1100px) {
-  .ov-kpi-row { grid-template-columns: repeat(2, 1fr); }
-  .ov-charts-row { grid-template-columns: 1fr; }
-  .eq-grid { grid-template-columns: repeat(2, 1fr); }
-  .sch-docs { grid-template-columns: repeat(2, 1fr); }
-  .pt-summary { grid-template-columns: repeat(2, 1fr); }
-  .rpt-export-row { grid-template-columns: 1fr; }
+  .ov-kpi-row {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .ov-charts-row {
+    grid-template-columns: 1fr;
+  }
+
+  .eq-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .sch-docs {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .pt-summary {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .rpt-export-row {
+    grid-template-columns: 1fr;
+  }
 }
 
 @media (max-width: 768px) {
-  .his-sidebar { width: 60px; }
-  .his-sb-item span, .his-sb-brand, .his-sb-user-info { display: none; }
-  .his-sb-top { justify-content: center; padding: 14px; }
-  .his-sb-bottom { flex-direction: column; gap: 8px; }
-  .ov-kpi-row { grid-template-columns: 1fr; }
-  .eq-grid { grid-template-columns: 1fr; }
-  .mt-summary { grid-template-columns: 1fr; }
-  .sch-docs { grid-template-columns: 1fr; }
-  .pt-summary { grid-template-columns: 1fr; }
+  .his-sidebar {
+    width: 60px;
+  }
+
+  .his-sb-item span,
+  .his-sb-brand,
+  .his-sb-user-info {
+    display: none;
+  }
+
+  .his-sb-top {
+    justify-content: center;
+    padding: 14px;
+  }
+
+  .his-sb-bottom {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .ov-kpi-row {
+    grid-template-columns: 1fr;
+  }
+
+  .eq-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .mt-summary {
+    grid-template-columns: 1fr;
+  }
+
+  .sch-docs {
+    grid-template-columns: 1fr;
+  }
+
+  .pt-summary {
+    grid-template-columns: 1fr;
+  }
 }
 
 /* ========== Device Hub ========== */
@@ -1841,7 +1909,8 @@ html {
   align-items: center;
   justify-content: center;
   gap: 4px;
-  padding: 8px 0;
+  padding: 8px 8px;
+  margin-top: auto;
   border-top: 1px solid #1e1e24;
   font-size: 0.68rem;
   font-weight: 600;
@@ -1858,7 +1927,8 @@ html {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 8px 0;
+  padding: 8px 8px;
+  margin-top: auto;
   border-top: 1px solid #1a1a1e;
   font-size: 0.62rem;
   font-weight: 600;
@@ -1871,6 +1941,7 @@ html {
   .hub-grid {
     grid-template-columns: repeat(2, 1fr);
   }
+
   .hub-main {
     padding: 32px 20px;
   }
@@ -2462,10 +2533,21 @@ html {
 }
 
 /* Per-card accent color variation */
-.sc-card-0 { border-left-color: #42a5f5; }
-.sc-card-1 { border-left-color: #66bb6a; }
-.sc-card-2 { border-left-color: #ffa726; }
-.sc-card-3 { border-left-color: #ab47bc; }
+.sc-card-0 {
+  border-left-color: #42a5f5;
+}
+
+.sc-card-1 {
+  border-left-color: #66bb6a;
+}
+
+.sc-card-2 {
+  border-left-color: #ffa726;
+}
+
+.sc-card-3 {
+  border-left-color: #ab47bc;
+}
 
 /* Badge: icon + number */
 .sc-card-top {
@@ -2527,7 +2609,7 @@ html {
   padding: 0 6px;
 }
 
-.sc-metric + .sc-metric {
+.sc-metric+.sc-metric {
   border-left: 1px solid #1e1e24;
 }
 
@@ -2552,35 +2634,43 @@ html {
   .sc-sticky-card {
     padding: 0 16px;
   }
+
   .sc-sticky-card.left,
   .sc-sticky-card.right {
     justify-content: center;
   }
+
   .sc-card {
     width: 100%;
     max-width: 420px;
   }
+
   .sc-scroll-runway {
     height: 100rem;
   }
+
   .sc-card-metrics {
     flex-direction: column;
     gap: 0;
   }
-  .sc-metric + .sc-metric {
+
+  .sc-metric+.sc-metric {
     border-left: none;
     border-top: 1px solid #1e1e24;
     padding-top: 8px;
     margin-top: 8px;
   }
+
   .sc-finale-sticky {
     flex-direction: column;
     gap: 40px;
     padding: 0 20px;
   }
+
   .finale-num {
     font-size: 4rem !important;
   }
+
   .finale-title {
     font-size: 1.8rem !important;
   }

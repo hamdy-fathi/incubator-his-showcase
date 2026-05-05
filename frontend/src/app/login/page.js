@@ -1,7 +1,7 @@
 'use client';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
-import { HeartPulse, Mail, Lock, AlertCircle, Loader2 } from 'lucide-react';
+import { HeartPulse, Mail, Lock, AlertCircle, Loader2, Sun, Moon } from 'lucide-react';
 
 export default function LoginPage() {
   const { login } = useAuth();
@@ -9,6 +9,20 @@ export default function LoginPage() {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [submitting, setSubmitting] = useState(false);
+  const [theme, setTheme] = useState('dark');
+
+  useEffect(() => {
+    const saved = localStorage.getItem('his_theme') || 'dark';
+    setTheme(saved);
+    document.documentElement.setAttribute('data-theme', saved);
+  }, []);
+
+  function toggleTheme() {
+    const next = theme === 'dark' ? 'light' : 'dark';
+    setTheme(next);
+    document.documentElement.setAttribute('data-theme', next);
+    localStorage.setItem('his_theme', next);
+  }
 
   async function handleSubmit(e) {
     e.preventDefault();
@@ -25,6 +39,9 @@ export default function LoginPage() {
 
   return (
     <div className="login-page">
+      <button className="theme-toggle login-theme-toggle" onClick={toggleTheme} title={theme === 'dark' ? 'Switch to Light Mode' : 'Switch to Dark Mode'}>
+        {theme === 'dark' ? <Sun size={15} /> : <Moon size={15} />}
+      </button>
       <div className="login-card">
         {/* Logo */}
         <div className="login-logo">

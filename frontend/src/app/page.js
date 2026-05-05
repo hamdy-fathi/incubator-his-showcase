@@ -10,7 +10,7 @@ import {
   Thermometer, Droplets, Zap, BarChart3, Calendar,
   ArrowUpRight, ArrowDownRight, CalendarClock, Users,
   UserRound, Phone, MapPin, Mail, Search,
-  FileText, DollarSign, Download, Plus, Shield, X
+  FileText, DollarSign, Download, Plus, Shield, X, Sun, Moon
 } from 'lucide-react';
 
 /* ══════════════ DATA ══════════════ */
@@ -1037,6 +1037,7 @@ export default function HomePage() {
   const router = useRouter();
   const [view, setView] = useState('overview');
   const [currentTime, setCurrentTime] = useState('');
+  const [theme, setTheme] = useState('dark');
 
   useEffect(() => {
     const update = () => setCurrentTime(new Date().toLocaleTimeString());
@@ -1044,6 +1045,19 @@ export default function HomePage() {
     const id = setInterval(update, 1000);
     return () => clearInterval(id);
   }, []);
+
+  useEffect(() => {
+    const saved = localStorage.getItem('his_theme') || 'dark';
+    setTheme(saved);
+    document.documentElement.setAttribute('data-theme', saved);
+  }, []);
+
+  function toggleTheme() {
+    const next = theme === 'dark' ? 'light' : 'dark';
+    setTheme(next);
+    document.documentElement.setAttribute('data-theme', next);
+    localStorage.setItem('his_theme', next);
+  }
 
   if (loading || !user) return null;
 

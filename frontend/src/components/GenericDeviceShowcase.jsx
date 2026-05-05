@@ -8,7 +8,7 @@ import { ChevronDown, ArrowDown } from 'lucide-react';
 /* ═══════════════ 3D Scene ═══════════════ */
 
 function DeviceScene({ modelPath, cameraTargets, modelRotation, zoomValue, mouseX, accentColor }) {
-const groupRef = useRef();
+  const groupRef = useRef();
   const modelRef = useRef();
   const { camera } = useThree();
   const { scene } = useGLTF(modelPath);
@@ -84,12 +84,12 @@ function LoadingFallback() {
 /* ═══════════════ Camera poses ═══════════════ */
 
 const CAMERA_POSES = [
-  { x: 4, y: 3, z: 4,  zoom: 1.0, rotation: 0               },
-  { x: 5, y: 2, z: 2,  zoom: 1.8, rotation: Math.PI * 0.25  },
-  { x: 0, y: 5, z: 3,  zoom: 1.7, rotation: Math.PI * 0.5   },
-  { x: -4, y: 2, z: 3, zoom: 1.2, rotation: Math.PI         },
-  { x: 4, y: 3, z: 4,  zoom: 2,   rotation: Math.PI * 2     },
-  { x: 4, y: 3, z: 4,  zoom: 1.0, rotation: Math.PI * 2.25  },
+  { x: 4, y: 3, z: 4, zoom: 1.0, rotation: 0 },
+  { x: 5, y: 2, z: 2, zoom: 1.8, rotation: Math.PI * 0.25 },
+  { x: 0, y: 5, z: 3, zoom: 1.7, rotation: Math.PI * 0.5 },
+  { x: -4, y: 2, z: 3, zoom: 1.2, rotation: Math.PI },
+  { x: 4, y: 3, z: 4, zoom: 2, rotation: Math.PI * 2 },
+  { x: 4, y: 3, z: 4, zoom: 1.0, rotation: Math.PI * 2.25 },
 ];
 
 /* ═══════════════ Main Component ═══════════════ */
@@ -102,7 +102,7 @@ export default function GenericDeviceShowcase({
   modelPath,
   sections,
   deviceLabel,
-  teamNumber = '3',
+  teamNumber = '6',
   accentColor = '#4fc3f7',
   pointLightColor = '#4caf50',
 }) {

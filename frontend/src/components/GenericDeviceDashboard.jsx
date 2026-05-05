@@ -86,9 +86,9 @@ function LoadingFallback() {
 /* ═══════════════ Default status+metric cards ═══════════════ */
 
 const STATUS_CONFIG = {
-  normal:   { label: 'Normal',   color: 'var(--status-normal)',   bg: 'var(--status-normal-bg)',   border: '#2e5e34' },
-  warning:  { label: 'Warning',  color: 'var(--status-warning)',  bg: 'var(--status-warning-bg)',  border: '#5e4a1a' },
-  critical: { label: 'Critical', color: 'var(--status-critical)', bg: 'var(--status-critical-bg)', border: '#5e2828' },
+  normal:   { label: 'Normal',   color: 'var(--status-normal)',   bg: 'var(--status-normal-bg)',   border: 'var(--normal-bg-tint)' },
+  warning:  { label: 'Warning',  color: 'var(--status-warning)',  bg: 'var(--status-warning-bg)',  border: 'var(--warning-bg-tint)' },
+  critical: { label: 'Critical', color: 'var(--status-critical)', bg: 'var(--status-critical-bg)', border: 'var(--critical-bg-tint)' },
 };
 
 function StatusRow({ status, metrics }) {
@@ -172,6 +172,7 @@ export default function GenericDeviceDashboard({
 }) {
   const router = useRouter();
   const [currentTime, setCurrentTime] = useState('');
+  const [canvasBg, setCanvasBg] = useState('#111111');
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -180,9 +181,21 @@ export default function GenericDeviceDashboard({
     return () => clearInterval(interval);
   }, []);
 
+  useEffect(() => {
+    function updateBg() {
+      const theme = document.documentElement.getAttribute('data-theme');
+      setCanvasBg(theme === 'light' ? '#f0f2f5' : '#111111');
+    }
+    updateBg();
+    const observer = new MutationObserver(updateBg);
+    observer.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+    return () => observer.disconnect();
+  }, []);
+
   const statusVal = status?.status || 'normal';
   const pointIntensity = statusVal === 'critical' ? 1.8 : statusVal === 'warning' ? 0.9 : 0.2;
   const pointColor = statusVal === 'critical' ? '#ef5350' : statusVal === 'warning' ? '#ffb300' : accentColor;
+  const ambientIntensity = canvasBg === '#f0f2f5' ? 1.0 : 0.5;
 
   return (
     <div className="app-container">
@@ -198,8 +211,8 @@ export default function GenericDeviceDashboard({
               cursor: 'pointer', fontSize: '0.7rem', fontWeight: 600,
               transition: 'all 0.15s', fontFamily: 'inherit',
             }}
-            onMouseEnter={e => { e.currentTarget.style.color = '#ccc'; e.currentTarget.style.borderColor = '#333'; }}
-            onMouseLeave={e => { e.currentTarget.style.color = '#666'; e.currentTarget.style.borderColor = '#1e1e24'; }}
+            onMouseEnter={e => { e.currentTarget.style.color = 'var(--text-secondary)'; e.currentTarget.style.borderColor = 'var(--border-color)'; }}
+            onMouseLeave={e => { e.currentTarget.style.color = 'var(--text-dim)'; e.currentTarget.style.borderColor = 'var(--border-subtle)'; }}
           >
             <ArrowLeft size={12} />
             HIS
@@ -237,8 +250,8 @@ export default function GenericDeviceDashboard({
                   shadows
                   gl={{ antialias: true, toneMapping: THREE.ACESFilmicToneMapping, toneMappingExposure: 1.2 }}
                 >
-                  <color attach="background" args={['#111111']} />
-                  <ambientLight intensity={0.5} />
+                  <color attach="background" args={[canvasBg]} />
+                  <ambientLight intensity={ambientIntensity} />
                   <directionalLight position={[5, 8, 5]} intensity={1.0} castShadow shadow-mapSize={[1024, 1024]} />
                   <pointLight position={[-4, 5, -3]} intensity={0.4} color="#42a5f5" />
                   <pointLight position={[0, 2, 3]} intensity={pointIntensity} color={pointColor} />

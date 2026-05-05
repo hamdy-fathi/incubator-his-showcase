@@ -48,7 +48,7 @@ const CustomTooltip = ({ active, payload, unit, color }) => {
   const label  = rawTs ? formatTime(rawTs) : (fmtTs ?? '');
   return (
     <div style={{
-      background: '#1c1c1c',
+      background: 'var(--bg-card)',
       border: `1px solid ${color}33`,
       borderRadius: 'var(--radius-md)',
       padding: '10px 16px',
@@ -112,7 +112,7 @@ const TrendIcon = ({ trend, current, safeMin, safeMax }) => {
 const axisProps = {
   tickLine: false,
   axisLine: false,
-  tick: { fill: '#444', fontSize: 9, fontFamily: 'Inter, sans-serif' },
+  tick: { fill: 'var(--text-ghost)', fontSize: 9, fontFamily: 'Inter, sans-serif' },
 };
 
 /* ─── Temperature chart ───────────────────────────────────────────────────── */
@@ -163,7 +163,7 @@ export function TemperatureChart({ data }) {
               </linearGradient>
             </defs>
 
-            <CartesianGrid stroke="#1e1e1e" strokeDasharray="0" vertical={false} />
+            <CartesianGrid stroke="var(--border-subtle)" strokeDasharray="0" vertical={false} />
 
             {/* Normal range band */}
             <ReferenceArea y1={36} y2={38}
@@ -227,7 +227,7 @@ export function TemperatureChart({ data }) {
       {/* Stats row */}
       <div style={{
         display: 'flex', justifyContent: 'space-around',
-        borderTop: '1px solid #1e1e1e',
+        borderTop: '1px solid var(--border-subtle)',
         paddingTop: 12, marginTop: 12,
       }}>
         <StatChip label="Min" value={min} unit="°C" color="var(--chart-humidity)" />

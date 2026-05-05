@@ -93,7 +93,7 @@ export default function RemoteControl({ settings, onUpdate }) {
             onClick={handleApply}
             style={applied ? {
               background: 'var(--status-normal)',
-              color: '#111',
+              color: 'var(--text-primary)',
               borderColor: 'var(--status-normal)',
               display: 'flex', alignItems: 'center', gap: 6,
             } : {

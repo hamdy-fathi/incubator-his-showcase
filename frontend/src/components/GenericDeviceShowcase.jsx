@@ -8,7 +8,7 @@ import { ChevronDown, ArrowDown } from 'lucide-react';
 /* ═══════════════ 3D Scene ═══════════════ */
 
 function DeviceScene({ modelPath, cameraTargets, modelRotation, zoomValue, mouseX, accentColor }) {
-  const groupRef = useRef();
+const groupRef = useRef();
   const modelRef = useRef();
   const { camera } = useThree();
   const { scene } = useGLTF(modelPath);
@@ -72,8 +72,8 @@ function LoadingFallback() {
   return (
     <Html center>
       <div style={{
-        background: '#222', border: '1px solid #333', borderRadius: '8px',
-        padding: '16px 24px', color: '#4fc3f7', fontSize: '0.85rem',
+        background: 'var(--bg-card)', border: '1px solid var(--border-color)', borderRadius: '8px',
+        padding: '16px 24px', color: 'var(--accent)', fontSize: '0.85rem',
       }}>
         Loading 3D Model...
       </div>
@@ -109,6 +109,17 @@ export default function GenericDeviceShowcase({
   const showcaseRef = useRef(null);
   const mouseX = useRef(0);
   const [mounted, setMounted] = useState(false);
+  const [showBg, setShowBg] = useState('#111111');
+
+  useEffect(() => {
+    function updateShowBg() {
+      setShowBg(document.documentElement.getAttribute('data-theme') === 'light' ? '#f0f2f5' : '#111111');
+    }
+    updateShowBg();
+    const observer = new MutationObserver(updateShowBg);
+    observer.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+    return () => observer.disconnect();
+  }, []);
 
   useEffect(() => { setMounted(true); }, []);
 
@@ -230,7 +241,7 @@ export default function GenericDeviceShowcase({
               powerPreference: 'high-performance',
             }}
           >
-            <color attach="background" args={['#111111']} />
+            <color attach="background" args={[showBg]} />
             <ambientLight intensity={0.5} />
             <directionalLight position={[5, 8, 5]} intensity={1.0} castShadow shadow-mapSize={[1024, 1024]} />
             <pointLight position={[-4, 5, -3]} intensity={0.4} color="#42a5f5" />

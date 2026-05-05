@@ -10,7 +10,7 @@ import {
   Thermometer, Droplets, Zap, BarChart3, Calendar,
   ArrowUpRight, ArrowDownRight, CalendarClock, Users,
   UserRound, Phone, MapPin, Mail, Search,
-  FileText, DollarSign, Download
+  FileText, DollarSign, Download, Plus, Shield, X
 } from 'lucide-react';
 
 /* ══════════════ DATA ══════════════ */
@@ -74,6 +74,7 @@ const NAV_ITEMS = [
   { id: 'patients', label: 'Patients', icon: Users },
   { id: 'reports', label: 'Reports', icon: FileText },
   { id: 'billing', label: 'Billing', icon: DollarSign },
+  { id: 'staff', label: 'Staff', icon: Shield },
 ];
 
 const MAINTENANCE_LOG = [
@@ -232,6 +233,86 @@ function OverviewView({ router }) {
               </div>
             );
           })}
+        </div>
+      </div>
+
+      {/* Alerts */}
+      <div className="ov-section">
+        <h3 className="ov-section-title">Recent Alerts</h3>
+        <div className="ov-alerts">
+          {[
+            { id: 1, device: 'Smart Incubator', severity: 'critical', message: 'Temperature exceeded 38.5°C — auto-cooling engaged', time: '2 min ago', icon: HeartPulse, color: '#e05555' },
+            { id: 2, device: 'ECG Monitor', severity: 'warning', message: 'Irregular heartbeat pattern detected — Lead II', time: '8 min ago', icon: Activity, color: '#ab47bc' },
+            { id: 3, device: 'Patient Monitor', severity: 'warning', message: 'SpO₂ dropped below 92% — Room 8', time: '15 min ago', icon: Monitor, color: '#4caf50' },
+            { id: 4, device: 'Ventilator', severity: 'info', message: 'Pressure calibration completed successfully', time: '23 min ago', icon: Wind, color: '#42a5f5' },
+            { id: 5, device: 'Infusion Pump', severity: 'critical', message: 'IV fluid volume critically low — Ward B, Bed 5', time: '31 min ago', icon: Syringe, color: '#ffb300' },
+            { id: 6, device: 'Smart Incubator', severity: 'info', message: 'Humidity stabilized at 62% — normal range', time: '45 min ago', icon: HeartPulse, color: '#e05555' },
+          ].map((alert) => {
+            const Icon = alert.icon;
+            return (
+              <div key={alert.id} className={`ov-alert ov-alert-${alert.severity}`}>
+                <div className="ov-alert-icon" style={{ color: alert.color }}>
+                  <Icon size={14} />
+                </div>
+                <div className="ov-alert-body">
+                  <div className="ov-alert-top">
+                    <span className="ov-alert-device">{alert.device}</span>
+                    <span className={`ov-alert-sev ${alert.severity}`}>
+                      {alert.severity === 'critical' && <AlertTriangle size={10} />}
+                      {alert.severity === 'warning' && <AlertTriangle size={10} />}
+                      {alert.severity === 'info' && <CheckCircle2 size={10} />}
+                      {alert.severity}
+                    </span>
+                  </div>
+                  <p className="ov-alert-msg">{alert.message}</p>
+                </div>
+                <span className="ov-alert-time">{alert.time}</span>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* Active Sessions */}
+      <div className="ov-section">
+        <h3 className="ov-section-title">Active Device Sessions</h3>
+        <div className="ov-sessions-wrap">
+          <table className="mt-table">
+            <thead>
+              <tr>
+                <th>Device</th>
+                <th>User</th>
+                <th>Role</th>
+                <th>Action</th>
+                <th>Duration</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              {[
+                { device: 'Smart Incubator', user: 'Dr. Nour Sayed', role: 'Doctor', action: 'Monitoring vitals', duration: '1h 24m', status: 'active' },
+                { device: 'ECG Monitor', user: 'Nurse Fatma Ali', role: 'Nurse', action: 'Recording ECG', duration: '32m', status: 'active' },
+                { device: 'Patient Monitor', user: 'Dr. Sara Mostafa', role: 'Doctor', action: 'Reviewing SpO₂ trends', duration: '18m', status: 'active' },
+                { device: 'Ventilator', user: 'Tech. Omar Khaled', role: 'Technician', action: 'Calibration check', duration: '45m', status: 'active' },
+                { device: 'Smart Incubator', user: 'System Admin', role: 'Admin', action: 'Remote control access', duration: '5m', status: 'active' },
+                { device: 'Infusion Pump', user: 'Nurse Heba Said', role: 'Nurse', action: 'Adjusting flow rate', duration: '12m', status: 'idle' },
+              ].map((s, i) => (
+                <tr key={i}>
+                  <td className="mt-device">{s.device}</td>
+                  <td>{s.user}</td>
+                  <td><span className={`ov-role-badge ${s.role.toLowerCase()}`}>{s.role}</span></td>
+                  <td className="ov-session-action">{s.action}</td>
+                  <td className="ov-session-duration">{s.duration}</td>
+                  <td>
+                    <span className={`mt-status-badge ${s.status}`}>
+                      <Circle size={6} fill="currentColor" />
+                      {s.status}
+                    </span>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
       </div>
     </div>
@@ -451,16 +532,27 @@ function ScheduleView() {
 /* ══════════════ PATIENTS VIEW ══════════════ */
 
 function PatientsView() {
+  const [patients, setPatients] = useState(PATIENTS);
+  const [showAdd, setShowAdd] = useState(false);
+  const [form, setForm] = useState({ name: '', age: '', gender: 'Male', blood: 'O+', room: '', doctor: '', diagnosis: '' });
   const [search, setSearch] = useState('');
-  const filtered = PATIENTS.filter(p =>
+  const filtered = patients.filter(p =>
     p.name.toLowerCase().includes(search.toLowerCase()) ||
     p.id.toLowerCase().includes(search.toLowerCase()) ||
     p.doctor.toLowerCase().includes(search.toLowerCase())
   );
 
-  const admitted = PATIENTS.filter(p => p.status === 'admitted').length;
-  const critical = PATIENTS.filter(p => p.status === 'critical').length;
-  const discharged = PATIENTS.filter(p => p.status === 'discharged').length;
+  const admitted = patients.filter(p => p.status === 'admitted').length;
+  const critical = patients.filter(p => p.status === 'critical').length;
+  const discharged = patients.filter(p => p.status === 'discharged').length;
+
+  function handleAdd(e) {
+    e.preventDefault();
+    const newP = { ...form, id: 'P-' + String(patients.length + 1).padStart(3, '0'), status: 'admitted', admitDate: new Date().toISOString().split('T')[0], phone: '-' };
+    setPatients([newP, ...patients]);
+    setForm({ name: '', age: '', gender: 'Male', blood: 'O+', room: '', doctor: '', diagnosis: '' });
+    setShowAdd(false);
+  }
 
   return (
     <div className="pt-view">
@@ -469,7 +561,7 @@ function PatientsView() {
         <div className="mt-sum-card">
           <Users size={18} className="mt-sum-icon" style={{ color: '#42a5f5' }} />
           <div>
-            <span className="mt-sum-value">{PATIENTS.length}</span>
+            <span className="mt-sum-value">{patients.length}</span>
             <span className="mt-sum-label">Total Patients</span>
           </div>
         </div>
@@ -500,15 +592,12 @@ function PatientsView() {
       <div className="pt-table-wrap">
         <div className="pt-table-header">
           <h3 className="ov-section-title" style={{ margin: 0 }}>Patient Records</h3>
-          <div className="pt-search">
-            <Search size={14} className="pt-search-icon" />
-            <input
-              type="text"
-              placeholder="Search by name, ID, or doctor..."
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              className="pt-search-input"
-            />
+          <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+            <div className="pt-search">
+              <Search size={14} className="pt-search-icon" />
+              <input type="text" placeholder="Search by name, ID, or doctor..." value={search} onChange={(e) => setSearch(e.target.value)} className="pt-search-input" />
+            </div>
+            <button className="rpt-csv-btn" onClick={() => setShowAdd(true)}><Plus size={13} /> Add Patient</button>
           </div>
         </div>
 
@@ -550,6 +639,33 @@ function PatientsView() {
           </tbody>
         </table>
       </div>
+
+      {showAdd && (
+        <div className="modal-overlay" onClick={() => setShowAdd(false)}>
+          <div className="modal-card" onClick={e => e.stopPropagation()}>
+            <div className="modal-header"><h3>Add New Patient</h3><button className="modal-close" onClick={() => { setShowAdd(false); setError(''); }}><X size={16} /></button></div>
+            <form onSubmit={handleAdd} className="modal-form">
+              <div className="modal-row">
+                <label>Full Name<input required value={form.name} onChange={e => setForm({...form, name: e.target.value})} /></label>
+                <label>Age<input required value={form.age} onChange={e => setForm({...form, age: e.target.value})} placeholder="e.g. 3 months" /></label>
+              </div>
+              <div className="modal-row">
+                <label>Gender<select value={form.gender} onChange={e => setForm({...form, gender: e.target.value})}><option>Male</option><option>Female</option></select></label>
+                <label>Blood Type<select value={form.blood} onChange={e => setForm({...form, blood: e.target.value})}>{['A+','A-','B+','B-','AB+','AB-','O+','O-'].map(b => <option key={b}>{b}</option>)}</select></label>
+              </div>
+              <div className="modal-row">
+                <label>Room<input required value={form.room} onChange={e => setForm({...form, room: e.target.value})} placeholder="e.g. NICU-3" /></label>
+                <label>Doctor<input required value={form.doctor} onChange={e => setForm({...form, doctor: e.target.value})} placeholder="e.g. Dr. Nour Sayed" /></label>
+              </div>
+              <label>Diagnosis<input required value={form.diagnosis} onChange={e => setForm({...form, diagnosis: e.target.value})} /></label>
+              <div className="modal-actions">
+                <button type="button" className="modal-btn-cancel" onClick={() => setShowAdd(false)}>Cancel</button>
+                <button type="submit" className="modal-btn-submit">Add Patient</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
@@ -798,6 +914,122 @@ function BillingView() {
   );
 }
 
+
+/* ══════════════ STAFF VIEW ══════════════ */
+
+const INIT_STAFF = [
+  { id: 'U-001', name: 'Dr. Nour Sayed', email: 'nour@hospital.com', role: 'doctor', department: 'Pediatrics', status: 'active', joined: '2024-03-15' },
+  { id: 'U-002', name: 'Dr. Ahmed Farouk', email: 'ahmed.f@hospital.com', role: 'doctor', department: 'Neonatology', status: 'active', joined: '2023-11-01' },
+  { id: 'U-003', name: 'Dr. Sara Mostafa', email: 'sara.m@hospital.com', role: 'doctor', department: 'Cardiology', status: 'active', joined: '2024-06-20' },
+  { id: 'U-004', name: 'Nurse Fatma Ali', email: 'fatma@hospital.com', role: 'nurse', department: 'NICU', status: 'active', joined: '2024-01-10' },
+  { id: 'U-005', name: 'Nurse Heba Said', email: 'heba@hospital.com', role: 'nurse', department: 'ICU', status: 'active', joined: '2024-08-05' },
+  { id: 'U-006', name: 'Ahmed Hassan', email: 'ahmed.h@hospital.com', role: 'technician', department: 'Biomedical Eng.', status: 'active', joined: '2023-09-12' },
+  { id: 'U-007', name: 'Omar Khaled', email: 'omar.k@hospital.com', role: 'technician', department: 'Biomedical Eng.', status: 'active', joined: '2024-04-22' },
+  { id: 'U-008', name: 'System Admin', email: 'admin@hospital.com', role: 'admin', department: 'IT', status: 'active', joined: '2023-01-01' },
+];
+
+function StaffView() {
+  const [staff, setStaff] = useState(INIT_STAFF);
+  const [showAdd, setShowAdd] = useState(false);
+  const [form, setForm] = useState({ name: '', email: '', password: '', role: 'nurse', department: '' });
+  const [error, setError] = useState('');
+  const [saving, setSaving] = useState(false);
+  const { token } = useAuth();
+
+  const byRole = (r) => staff.filter(s => s.role === r).length;
+
+  async function handleAdd(e) {
+    e.preventDefault();
+    setError('');
+    setSaving(true);
+    try {
+      const res = await fetch('http://localhost:3001/auth/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+        body: JSON.stringify({ email: form.email, password: form.password, fullName: form.name, role: form.role }),
+      });
+      if (!res.ok) {
+        const data = await res.json();
+        throw new Error(data.message || 'Registration failed');
+      }
+      const data = await res.json();
+      const newUser = { id: data.id || ('U-' + String(staff.length + 1).padStart(3, '0')), name: form.name, email: form.email, role: form.role, department: form.department, status: 'active', joined: new Date().toISOString().split('T')[0] };
+      setStaff([...staff, newUser]);
+      setForm({ name: '', email: '', password: '', role: 'nurse', department: '' });
+      setShowAdd(false);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  return (
+    <div className="pt-view">
+      <div className="pt-summary">
+        <div className="mt-sum-card"><Shield size={18} className="mt-sum-icon" style={{ color: '#42a5f5' }} /><div><span className="mt-sum-value">{staff.length}</span><span className="mt-sum-label">Total Staff</span></div></div>
+        <div className="mt-sum-card"><Stethoscope size={18} className="mt-sum-icon" style={{ color: '#42a5f5' }} /><div><span className="mt-sum-value">{byRole('doctor')}</span><span className="mt-sum-label">Doctors</span></div></div>
+        <div className="mt-sum-card"><HeartPulse size={18} className="mt-sum-icon" style={{ color: '#4caf50' }} /><div><span className="mt-sum-value">{byRole('nurse')}</span><span className="mt-sum-label">Nurses</span></div></div>
+        <div className="mt-sum-card"><Wrench size={18} className="mt-sum-icon" style={{ color: '#ffb300' }} /><div><span className="mt-sum-value">{byRole('technician')}</span><span className="mt-sum-label">Technicians</span></div></div>
+      </div>
+
+      <div className="pt-table-wrap">
+        <div className="pt-table-header">
+          <h3 className="ov-section-title" style={{ margin: 0 }}>Staff Directory</h3>
+          <button className="rpt-csv-btn" onClick={() => setShowAdd(true)}><Plus size={13} /> Add User</button>
+        </div>
+        <table className="mt-table">
+          <thead><tr><th>ID</th><th>Name</th><th>Email</th><th>Role</th><th>Department</th><th>Joined</th><th>Status</th></tr></thead>
+          <tbody>
+            {staff.map(s => (
+              <tr key={s.id}>
+                <td className="pt-id">{s.id}</td>
+                <td className="mt-device">{s.name}</td>
+                <td style={{ color: '#888' }}>{s.email}</td>
+                <td><span className={"ov-role-badge " + s.role}>{s.role}</span></td>
+                <td>{s.department}</td>
+                <td className="mt-date">{s.joined}</td>
+                <td><span className={"mt-status-badge " + s.status}><Circle size={6} fill="currentColor" />{s.status}</span></td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      {showAdd && (
+        <div className="modal-overlay" onClick={() => setShowAdd(false)}>
+          <div className="modal-card" onClick={e => e.stopPropagation()}>
+            <div className="modal-header"><h3>Add New User</h3><button className="modal-close" onClick={() => setShowAdd(false)}><X size={16} /></button></div>
+            <form onSubmit={handleAdd} className="modal-form">
+              <div className="modal-row">
+                <label>Full Name<input required value={form.name} onChange={e => setForm({...form, name: e.target.value})} /></label>
+                <label>Email<input required type="email" value={form.email} onChange={e => setForm({...form, email: e.target.value})} /></label>
+              </div>
+              <div className="modal-row">
+                <label>Password<input required type="password" minLength={4} value={form.password} onChange={e => setForm({...form, password: e.target.value})} placeholder="Min 4 characters" /></label>
+                <label>Role
+                  <select value={form.role} onChange={e => setForm({...form, role: e.target.value})}>
+                    <option value="nurse">Nurse</option>
+                    <option value="doctor">Doctor</option>
+                    <option value="technician">Technician</option>
+                    <option value="admin">Admin</option>
+                  </select>
+                </label>
+                <label>Department<input required value={form.department} onChange={e => setForm({...form, department: e.target.value})} placeholder="e.g. NICU" /></label>
+              </div>
+              {error && <div className="modal-error">{error}</div>}
+              <div className="modal-actions">
+                <button type="button" className="modal-btn-cancel" onClick={() => { setShowAdd(false); setError(''); }}>Cancel</button>
+                <button type="submit" className="modal-btn-submit" disabled={saving}>{saving ? 'Creating...' : 'Add User'}</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
 /* ══════════════ MAIN PAGE ══════════════ */
 
 export default function HomePage() {
@@ -883,6 +1115,7 @@ export default function HomePage() {
           {view === 'patients' && <PatientsView />}
           {view === 'reports' && <ReportsView />}
           {view === 'billing' && <BillingView />}
+          {view === 'staff' && <StaffView />}
         </div>
       </main>
     </div>

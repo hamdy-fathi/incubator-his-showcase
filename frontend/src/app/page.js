@@ -643,21 +643,21 @@ function PatientsView() {
       {showAdd && (
         <div className="modal-overlay" onClick={() => setShowAdd(false)}>
           <div className="modal-card" onClick={e => e.stopPropagation()}>
-            <div className="modal-header"><h3>Add New Patient</h3><button className="modal-close" onClick={() => { setShowAdd(false); setError(''); }}><X size={16} /></button></div>
+            <div className="modal-header"><h3>Add New Patient</h3><button className="modal-close" onClick={() => setShowAdd(false)}><X size={16} /></button></div>
             <form onSubmit={handleAdd} className="modal-form">
               <div className="modal-row">
-                <label>Full Name<input required value={form.name} onChange={e => setForm({...form, name: e.target.value})} /></label>
-                <label>Age<input required value={form.age} onChange={e => setForm({...form, age: e.target.value})} placeholder="e.g. 3 months" /></label>
+                <label>Full Name<input required value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} /></label>
+                <label>Age<input required value={form.age} onChange={e => setForm({ ...form, age: e.target.value })} placeholder="e.g. 3 months" /></label>
               </div>
               <div className="modal-row">
-                <label>Gender<select value={form.gender} onChange={e => setForm({...form, gender: e.target.value})}><option>Male</option><option>Female</option></select></label>
-                <label>Blood Type<select value={form.blood} onChange={e => setForm({...form, blood: e.target.value})}>{['A+','A-','B+','B-','AB+','AB-','O+','O-'].map(b => <option key={b}>{b}</option>)}</select></label>
+                <label>Gender<select value={form.gender} onChange={e => setForm({ ...form, gender: e.target.value })}><option>Male</option><option>Female</option></select></label>
+                <label>Blood Type<select value={form.blood} onChange={e => setForm({ ...form, blood: e.target.value })}>{['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'].map(b => <option key={b}>{b}</option>)}</select></label>
               </div>
               <div className="modal-row">
-                <label>Room<input required value={form.room} onChange={e => setForm({...form, room: e.target.value})} placeholder="e.g. NICU-3" /></label>
-                <label>Doctor<input required value={form.doctor} onChange={e => setForm({...form, doctor: e.target.value})} placeholder="e.g. Dr. Nour Sayed" /></label>
+                <label>Room<input required value={form.room} onChange={e => setForm({ ...form, room: e.target.value })} placeholder="e.g. NICU-3" /></label>
+                <label>Doctor<input required value={form.doctor} onChange={e => setForm({ ...form, doctor: e.target.value })} placeholder="e.g. Dr. Nour Sayed" /></label>
               </div>
-              <label>Diagnosis<input required value={form.diagnosis} onChange={e => setForm({...form, diagnosis: e.target.value})} /></label>
+              <label>Diagnosis<input required value={form.diagnosis} onChange={e => setForm({ ...form, diagnosis: e.target.value })} /></label>
               <div className="modal-actions">
                 <button type="button" className="modal-btn-cancel" onClick={() => setShowAdd(false)}>Cancel</button>
                 <button type="submit" className="modal-btn-submit">Add Patient</button>
@@ -1002,20 +1002,20 @@ function StaffView() {
             <div className="modal-header"><h3>Add New User</h3><button className="modal-close" onClick={() => setShowAdd(false)}><X size={16} /></button></div>
             <form onSubmit={handleAdd} className="modal-form">
               <div className="modal-row">
-                <label>Full Name<input required value={form.name} onChange={e => setForm({...form, name: e.target.value})} /></label>
-                <label>Email<input required type="email" value={form.email} onChange={e => setForm({...form, email: e.target.value})} /></label>
+                <label>Full Name<input required value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} /></label>
+                <label>Email<input required type="email" value={form.email} onChange={e => setForm({ ...form, email: e.target.value })} /></label>
               </div>
               <div className="modal-row">
-                <label>Password<input required type="password" minLength={4} value={form.password} onChange={e => setForm({...form, password: e.target.value})} placeholder="Min 4 characters" /></label>
+                <label>Password<input required type="password" minLength={4} value={form.password} onChange={e => setForm({ ...form, password: e.target.value })} placeholder="Min 4 characters" /></label>
                 <label>Role
-                  <select value={form.role} onChange={e => setForm({...form, role: e.target.value})}>
+                  <select value={form.role} onChange={e => setForm({ ...form, role: e.target.value })}>
                     <option value="nurse">Nurse</option>
                     <option value="doctor">Doctor</option>
                     <option value="technician">Technician</option>
                     <option value="admin">Admin</option>
                   </select>
                 </label>
-                <label>Department<input required value={form.department} onChange={e => setForm({...form, department: e.target.value})} placeholder="e.g. NICU" /></label>
+                <label>Department<input required value={form.department} onChange={e => setForm({ ...form, department: e.target.value })} placeholder="e.g. NICU" /></label>
               </div>
               {error && <div className="modal-error">{error}</div>}
               <div className="modal-actions">
@@ -1071,7 +1071,7 @@ export default function HomePage() {
           </div>
           <div className="his-sb-brand">
             <span className="his-sb-name">HIS</span>
-            <span className="his-sb-sub">Team #3</span>
+            <span className="his-sb-sub">Team #6</span>
           </div>
         </div>
 

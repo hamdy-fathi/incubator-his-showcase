@@ -2,7 +2,7 @@ import './globals.css';
 import Providers from './providers';
 
 export const metadata = {
-  title: 'Team #3 Project | Real-Time Monitoring System',
+  title: 'Team #6 Project | Real-Time Monitoring System',
   description: 'Medical-grade neonatal incubator monitoring dashboard with real-time data visualization, 3D model integration, and intelligent alerting system.',
   keywords: ['neonatal', 'incubator', 'medical', 'monitoring', 'IoT', 'healthcare'],
 };

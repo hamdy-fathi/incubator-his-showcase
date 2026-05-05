@@ -23,8 +23,8 @@ const SECTIONS = [
     description: 'Precision-engineered incubation system providing optimal thermal regulation for premature and critically ill neonates. Continuous monitoring ensures stable microenvironment conditions.',
     stats: [
       { label: 'Temperature Accuracy', value: '±0.1°C' },
-      { label: 'Response Time',        value: '<2s'     },
-      { label: 'Humidity Range',       value: '40–80%'  },
+      { label: 'Response Time', value: '<2s' },
+      { label: 'Humidity Range', value: '40–80%' },
     ],
   },
   {
@@ -32,9 +32,9 @@ const SECTIONS = [
     title: 'IoT-Enabled Technology',
     description: 'Real-time data transmission via WebSocket protocol with encrypted API communication. Seamless integration with hospital information systems and EHR platforms.',
     stats: [
-      { label: 'Data Interval', value: '2s'      },
-      { label: 'Protocol',      value: 'WSS'     },
-      { label: 'Encryption',    value: 'AES-256' },
+      { label: 'Data Interval', value: '2s' },
+      { label: 'Protocol', value: 'WSS' },
+      { label: 'Encryption', value: 'AES-256' },
     ],
   },
   {
@@ -43,8 +43,8 @@ const SECTIONS = [
     description: 'Intelligent alert system with configurable thresholds. Automated escalation from warning to critical states with visual, audible, and remote notification channels.',
     stats: [
       { label: 'Alert Latency', value: '<500ms' },
-      { label: 'Uptime',        value: '99.97%' },
-      { label: 'Redundancy',    value: 'Triple' },
+      { label: 'Uptime', value: '99.97%' },
+      { label: 'Redundancy', value: 'Triple' },
     ],
   },
   {
@@ -52,9 +52,9 @@ const SECTIONS = [
     title: 'Clinical Specifications',
     description: 'Medical-grade construction meeting IEC 60601-1 standards. Designed for NICU environments with full remote control capability and comprehensive data logging for clinical analysis.',
     stats: [
-      { label: 'Standard',      value: 'IEC 60601' },
-      { label: 'Data Retention', value: '90 days'  },
-      { label: 'Remote Control', value: 'Full'     },
+      { label: 'Standard', value: 'IEC 60601' },
+      { label: 'Data Retention', value: '90 days' },
+      { label: 'Remote Control', value: 'Full' },
     ],
   },
 ];
@@ -77,7 +77,7 @@ export default function IncubatorPage() {
 
   const cameraTargets = useRef({ x: 4, y: 3, z: 4 });
   const modelRotation = useRef(0);
-  const zoomValue     = useRef(1.0);
+  const zoomValue = useRef(1.0);
 
   useEffect(() => {
     const onScroll = () => setShowShowcase(window.scrollY > window.innerHeight * 0.7);
@@ -105,7 +105,7 @@ export default function IncubatorPage() {
 
   const overlayCards = [
     { label: 'Temperature', icon: Thermometer, value: latest?.temperature?.toFixed(1) ?? '--.-', unit: '°C', color: 'var(--chart-temp)' },
-    { label: 'Humidity',    icon: Droplets,    value: latest?.humidity ?? '--',                  unit: '%',  color: 'var(--chart-humidity)' },
+    { label: 'Humidity', icon: Droplets, value: latest?.humidity ?? '--', unit: '%', color: 'var(--chart-humidity)' },
   ];
 
   return (
@@ -113,7 +113,7 @@ export default function IncubatorPage() {
       <GenericDeviceDashboard
         showCanvas={!showShowcase}
         user={user}
-        deviceName="Team #3 Project"
+        deviceName="Team #6 Project"
         deviceSubtitle="Neonatal Monitoring"
         deviceIcon={HeartPulse}
         accentColor="#e05555"
@@ -127,7 +127,7 @@ export default function IncubatorPage() {
         ChartsComponent={
           <>
             <TemperatureChart data={history} />
-            <HumidityChart    data={history} />
+            <HumidityChart data={history} />
           </>
         }
         ControlsComponent={

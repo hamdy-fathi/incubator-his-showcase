@@ -114,7 +114,7 @@ export default function LoginPage() {
 
         <div className="login-footer">
           <span>Hospital Information System</span>
-          <span>Team #3 Project</span>
+          <span>Team #6 Project</span>
         </div>
       </div>
     </div>

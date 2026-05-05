@@ -236,6 +236,117 @@ function OverviewView({ router }) {
         </div>
       </div>
 
+      {/* ── Biomedical Engineering KPIs ── */}
+      <div className="ov-section">
+        <h3 className="ov-section-title">Biomedical Engineering Indicators</h3>
+        <div className="bme-kpi-grid">
+          {/* IPM Completion Rate */}
+          <div className="bme-kpi-card">
+            <div className="bme-kpi-gauge">
+              <svg viewBox="0 0 36 36" className="bme-gauge-svg">
+                <path d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+                  fill="none" stroke="var(--border-subtle)" strokeWidth="3" />
+                <path d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+                  fill="none" stroke="var(--status-normal)" strokeWidth="3" strokeDasharray="92, 100" strokeLinecap="round" />
+              </svg>
+              <span className="bme-gauge-val" style={{ color: 'var(--status-normal)' }}>92%</span>
+            </div>
+            <div className="bme-kpi-info">
+              <span className="bme-kpi-label">IPM Completion Rate</span>
+              <span className="bme-kpi-desc">Inspections & Preventive Maintenance completed on schedule</span>
+              <div className="bme-kpi-detail">
+                <span>55 / 60 tasks completed</span>
+                <span className="bme-kpi-target">Target: ≥ 90%</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Availability */}
+          <div className="bme-kpi-card">
+            <div className="bme-kpi-gauge">
+              <svg viewBox="0 0 36 36" className="bme-gauge-svg">
+                <path d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+                  fill="none" stroke="var(--border-subtle)" strokeWidth="3" />
+                <path d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+                  fill="none" stroke="var(--accent-solid)" strokeWidth="3" strokeDasharray="97.3, 100" strokeLinecap="round" />
+              </svg>
+              <span className="bme-gauge-val" style={{ color: 'var(--accent-solid)' }}>97.3%</span>
+            </div>
+            <div className="bme-kpi-info">
+              <span className="bme-kpi-label">Equipment Availability</span>
+              <span className="bme-kpi-desc">A = Uptime / (Uptime + Downtime) across all registered devices</span>
+              <div className="bme-kpi-detail">
+                <span>Uptime: 8,518 hrs | Downtime: 238 hrs</span>
+                <span className="bme-kpi-target">Target: ≥ 95%</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Failure Rate (λ) */}
+          <div className="bme-kpi-card">
+            <div className="bme-kpi-gauge">
+              <svg viewBox="0 0 36 36" className="bme-gauge-svg">
+                <path d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+                  fill="none" stroke="var(--border-subtle)" strokeWidth="3" />
+                <path d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+                  fill="none" stroke="var(--status-warning)" strokeWidth="3" strokeDasharray="12, 100" strokeLinecap="round" />
+              </svg>
+              <span className="bme-gauge-val" style={{ color: 'var(--status-warning)' }}>0.012</span>
+            </div>
+            <div className="bme-kpi-info">
+              <span className="bme-kpi-label">Failure Rate (λ)</span>
+              <span className="bme-kpi-desc">λ = Number of failures / Total operating hours</span>
+              <div className="bme-kpi-detail">
+                <span>7 failures / 8,518 hrs = 0.012 failures/hr</span>
+                <span className="bme-kpi-target">Target: ≤ 0.02</span>
+              </div>
+            </div>
+          </div>
+
+          {/* MTBF */}
+          <div className="bme-kpi-card">
+            <div className="bme-kpi-gauge">
+              <svg viewBox="0 0 36 36" className="bme-gauge-svg">
+                <path d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+                  fill="none" stroke="var(--border-subtle)" strokeWidth="3" />
+                <path d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+                  fill="none" stroke="var(--teal)" strokeWidth="3" strokeDasharray="83, 100" strokeLinecap="round" />
+              </svg>
+              <span className="bme-gauge-val" style={{ color: 'var(--teal)', fontSize: '0.55rem' }}>1,217h</span>
+            </div>
+            <div className="bme-kpi-info">
+              <span className="bme-kpi-label">MTBF</span>
+              <span className="bme-kpi-desc">Mean Time Between Failures = Total uptime / Number of failures</span>
+              <div className="bme-kpi-detail">
+                <span>8,518 hrs / 7 failures = 1,216.9 hrs</span>
+                <span className="bme-kpi-target">Target: ≥ 1,000 hrs</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Reliability Function R(t) */}
+          <div className="bme-kpi-card bme-kpi-wide">
+            <div className="bme-kpi-gauge">
+              <svg viewBox="0 0 36 36" className="bme-gauge-svg">
+                <path d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+                  fill="none" stroke="var(--border-subtle)" strokeWidth="3" />
+                <path d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+                  fill="none" stroke="var(--status-purple)" strokeWidth="3" strokeDasharray="88.6, 100" strokeLinecap="round" />
+              </svg>
+              <span className="bme-gauge-val" style={{ color: 'var(--status-purple)' }}>88.6%</span>
+            </div>
+            <div className="bme-kpi-info">
+              <span className="bme-kpi-label">Reliability Function R(t)</span>
+              <span className="bme-kpi-desc">R(t) = e<sup>−λt</sup> — Probability of equipment operating without failure over time period t = 720 hrs (30 days)</span>
+              <div className="bme-kpi-detail">
+                <span>R(720) = e<sup>−0.000165 × 720</sup> = 0.8882 → 88.6% reliability over 30 days</span>
+                <span className="bme-kpi-target">Target: ≥ 85%</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
       {/* Alerts */}
       <div className="ov-section">
         <h3 className="ov-section-title">Recent Alerts</h3>

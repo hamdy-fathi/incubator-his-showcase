@@ -1134,6 +1134,105 @@ body,
 .ov-ind-status.offline {
   color: var(--text-faint);
 }
+/* ========== Biomedical Engineering KPIs ========== */
+.bme-kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+}
+
+.bme-kpi-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  padding: 18px 20px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.bme-kpi-card:hover {
+  border-color: var(--border-muted);
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+}
+
+.bme-kpi-wide {
+  grid-column: 1 / -1;
+}
+
+.bme-kpi-gauge {
+  position: relative;
+  width: 64px;
+  height: 64px;
+  flex-shrink: 0;
+}
+
+.bme-gauge-svg {
+  width: 100%;
+  height: 100%;
+  transform: rotate(-90deg);
+}
+
+.bme-gauge-val {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 0.65rem;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.02em;
+}
+
+.bme-kpi-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.bme-kpi-label {
+  display: block;
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--text-bright);
+  margin-bottom: 4px;
+}
+
+.bme-kpi-desc {
+  display: block;
+  font-size: 0.62rem;
+  color: var(--text-dim);
+  line-height: 1.45;
+  margin-bottom: 8px;
+}
+
+.bme-kpi-detail {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  font-size: 0.58rem;
+  color: var(--text-muted);
+  padding-top: 8px;
+  border-top: 1px solid var(--border-subtle);
+}
+
+.bme-kpi-target {
+  font-weight: 600;
+  color: var(--text-dim);
+  white-space: nowrap;
+}
+
+.bme-kpi-detail sup {
+  font-size: 0.45rem;
+  vertical-align: super;
+}
+
+@media (max-width: 900px) {
+  .bme-kpi-grid {
+    grid-template-columns: 1fr;
+  }
+}
 
 /* ========== Alerts Feed ========== */
 .ov-alerts {

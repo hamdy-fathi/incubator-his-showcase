@@ -42,7 +42,10 @@ const HairlineCursor = ({ x, y, height, color }) => (
 
 const CustomTooltip = ({ active, payload, unit, color }) => {
   if (!active || !payload?.length) return null;
-  const ts = payload[0]?.payload?.time;
+  // incubator uses `time` (ISO), device pages use `ts` (pre-formatted string)
+  const rawTs  = payload[0]?.payload?.time;
+  const fmtTs  = payload[0]?.payload?.ts;
+  const label  = rawTs ? formatTime(rawTs) : (fmtTs ?? '');
   return (
     <div style={{
       background: '#1c1c1c',
@@ -53,7 +56,7 @@ const CustomTooltip = ({ active, payload, unit, color }) => {
       backdropFilter: 'blur(8px)',
     }}>
       <div style={{ color: 'var(--text-dim)', fontSize: '0.6rem', marginBottom: 5, letterSpacing: '0.5px' }}>
-        {formatTime(ts)}
+        {label}
       </div>
       <div style={{
         color, fontWeight: 800, fontSize: '1.25rem',
@@ -352,6 +355,144 @@ export function HumidityChart({ data }) {
         <StatChip label="Min" value={min} unit="%" color="var(--chart-temp)" />
         <StatChip label="Avg" value={avg} unit="%" color="var(--text-secondary)" />
         <StatChip label="Max" value={max} unit="%" color={COLOR} />
+      </div>
+    </div>
+  );
+}
+
+/* ─── Generic Device Chart (reusable for any device page) ─────────────────── */
+
+export function DeviceChart({
+  data,
+  dataKey,
+  label,
+  color,
+  unit = '',
+  domain = ['auto', 'auto'],
+  ticks,
+  tickFormatter,
+  safeMin,
+  safeMax,
+}) {
+  const latest    = data.length ? data[data.length - 1]?.[dataKey] : null;
+  const { min, max, avg, trend } = stats(data, dataKey);
+
+  const gradId = `devgrad-${dataKey}-${color.replace('#', '')}`;
+
+  return (
+    <div className="card" style={{ borderLeft: `3px solid ${color}`, padding: '16px 20px' }}>
+
+      {/* Header */}
+      <div className="card-header" style={{ marginBottom: 14 }}>
+        <span className="card-title" style={{ color: 'var(--text-secondary)' }}>
+          {label}
+        </span>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+          <TrendIcon
+            trend={trend}
+            current={latest}
+            safeMin={safeMin ?? -Infinity}
+            safeMax={safeMax ??  Infinity}
+          />
+          {latest != null && (
+            <span style={{
+              fontSize: '1.1rem', fontWeight: 800,
+              color, fontVariantNumeric: 'tabular-nums', letterSpacing: '-0.02em',
+            }}>
+              {typeof latest === 'number' ? latest.toFixed(1) : latest}
+              <span style={{ fontSize: '0.7rem', opacity: 0.5, marginLeft: 2, fontWeight: 500 }}>{unit}</span>
+            </span>
+          )}
+          <span className="card-badge" style={{ background: `${color}18`, color }}>
+            LIVE
+          </span>
+        </div>
+      </div>
+
+      {/* Chart */}
+      <div style={{ height: 190 }}>
+        <ResponsiveContainer width="100%" height="100%">
+          <AreaChart data={data} margin={{ top: 8, right: 4, left: -22, bottom: 0 }}>
+            <defs>
+              <linearGradient id={gradId} x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%"   stopColor={color} stopOpacity={0.35} />
+                <stop offset="45%"  stopColor={color} stopOpacity={0.10} />
+                <stop offset="100%" stopColor={color} stopOpacity={0.00} />
+              </linearGradient>
+            </defs>
+
+            <CartesianGrid stroke="#1e1e1e" strokeDasharray="0" vertical={false} />
+
+            {/* Normal range band */}
+            {safeMin != null && safeMax != null && (
+              <ReferenceArea
+                y1={safeMin} y2={safeMax}
+                fill={color} fillOpacity={0.04}
+                stroke={color} strokeOpacity={0.15} strokeWidth={1}
+              />
+            )}
+
+            <XAxis
+              dataKey="ts"
+              {...axisProps}
+              interval="preserveStartEnd"
+              minTickGap={60}
+            />
+            <YAxis
+              domain={domain}
+              ticks={ticks}
+              tickFormatter={tickFormatter ?? ((v) => `${v}${unit}`)}
+              {...axisProps}
+            />
+
+            <Tooltip
+              content={<CustomTooltip unit={unit} color={color} />}
+              cursor={<HairlineCursor color={color} />}
+            />
+
+            {/* Glow layer */}
+            <Area
+              type="monotoneX"
+              dataKey={dataKey}
+              stroke={color}
+              strokeWidth={10}
+              strokeOpacity={0.08}
+              fill="none"
+              dot={false}
+              isAnimationActive={false}
+              activeDot={false}
+            />
+
+            {/* Crisp line + fill */}
+            <Area
+              type="monotoneX"
+              dataKey={dataKey}
+              stroke={color}
+              strokeWidth={2.2}
+              fill={`url(#${gradId})`}
+              dot={false}
+              isAnimationActive={false}
+              activeDot={{
+                r: 4,
+                fill: color,
+                stroke: `${color}55`,
+                strokeWidth: 7,
+                filter: `drop-shadow(0 0 6px ${color})`,
+              }}
+            />
+          </AreaChart>
+        </ResponsiveContainer>
+      </div>
+
+      {/* Stats row */}
+      <div style={{
+        display: 'flex', justifyContent: 'space-around',
+        borderTop: '1px solid #1e1e1e',
+        paddingTop: 12, marginTop: 12,
+      }}>
+        <StatChip label="Min" value={min} unit={unit} color="var(--chart-humidity)" />
+        <StatChip label="Avg" value={avg} unit={unit} color="var(--text-secondary)" />
+        <StatChip label="Max" value={max} unit={unit} color={color} />
       </div>
     </div>
   );

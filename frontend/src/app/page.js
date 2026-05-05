@@ -27,9 +27,9 @@ const DEVICES = [
   {
     id: 'ventilator', name: 'Ventilator',
     description: 'Mechanical ventilation control & respiratory monitoring',
-    icon: Wind, href: null, status: 'offline', accent: '#42a5f5',
-    stats: [{ label: 'Mode', value: '—' }, { label: 'Rate', value: '—' }],
-    active: false, location: 'ICU — Room 12', serial: 'VNT-2024-0087',
+    icon: Wind, href: '/devices/ventilator', status: 'online', accent: '#42a5f5',
+    stats: [{ label: 'Mode', value: 'A/C' }, { label: 'Rate', value: '16 BPM' }],
+    active: true, location: 'ICU — Room 12', serial: 'VNT-2024-0087',
     lastMaintenance: '2026-03-20', nextMaintenance: '2026-06-20',
   },
   {
@@ -51,17 +51,17 @@ const DEVICES = [
   {
     id: 'ecg', name: 'ECG Monitor',
     description: '12-lead electrocardiogram with real-time waveform display',
-    icon: Activity, href: null, status: 'offline', accent: '#ab47bc',
-    stats: [{ label: 'Lead', value: '—' }, { label: 'BPM', value: '—' }],
-    active: false, location: 'Cardiology — Lab 2', serial: 'ECG-2024-0064',
+    icon: Activity, href: '/devices/ecg', status: 'online', accent: '#ab47bc',
+    stats: [{ label: 'HR', value: '72 BPM' }, { label: 'QT', value: '390 ms' }],
+    active: true, location: 'Cardiology — Lab 2', serial: 'ECG-2024-0064',
     lastMaintenance: '2026-04-22', nextMaintenance: '2026-07-22',
   },
   {
-    id: 'diagnostic', name: 'Diagnostic Suite',
-    description: 'Lab results integration & clinical decision support',
-    icon: Stethoscope, href: null, status: 'offline', accent: '#26a69a',
-    stats: [{ label: 'Tests', value: '—' }, { label: 'Alerts', value: '—' }],
-    active: false, location: 'Lab — Floor 2', serial: 'DGN-2024-0008',
+    id: 'spo2', name: 'SpO₂ Monitor',
+    description: 'Pulse oximetry — continuous SpO₂, perfusion index & pulse rate',
+    icon: Stethoscope, href: '/devices/spo2', status: 'online', accent: '#26a69a',
+    stats: [{ label: 'SpO₂', value: '97%' }, { label: 'PR', value: '74 BPM' }],
+    active: true, location: 'Ward A — Bed 2', serial: 'SPO-2024-0033',
     lastMaintenance: '2026-03-05', nextMaintenance: '2026-06-05',
   },
 ];
@@ -117,7 +117,7 @@ const PATIENTS = [
 function OverviewView({ router }) {
   const kpis = [
     { label: 'Total Devices', value: '6', sub: 'Registered', icon: Box, color: '#42a5f5' },
-    { label: 'Online', value: '1', sub: '16.7%', icon: CheckCircle2, color: '#4caf50' },
+    { label: 'Online', value: '4', sub: '66.7%', icon: CheckCircle2, color: '#4caf50' },
     { label: 'Alerts', value: '3', sub: 'Active', icon: AlertTriangle, color: '#ffb300' },
     { label: 'Uptime', value: '99.2%', sub: 'This month', icon: TrendingUp, color: '#ab47bc' },
   ];
@@ -194,13 +194,13 @@ function OverviewView({ router }) {
                   <path d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
                     fill="none" stroke="#1e1e24" strokeWidth="3" />
                   <path d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
-                    fill="none" stroke="#4caf50" strokeWidth="3" strokeDasharray="16.7, 100" />
+                    fill="none" stroke="#4caf50" strokeWidth="3" strokeDasharray="66.7, 100" />
                 </svg>
-                <span className="ov-donut-label">1/6</span>
+                <span className="ov-donut-label">4/6</span>
               </div>
               <div className="ov-donut-legend">
-                <div><Circle size={8} fill="#4caf50" stroke="none" /> Online (1)</div>
-                <div><Circle size={8} fill="#555" stroke="none" /> Offline (5)</div>
+                <div><Circle size={8} fill="#4caf50" stroke="none" /> Online (4)</div>
+                <div><Circle size={8} fill="#555" stroke="none" /> Offline (2)</div>
               </div>
             </div>
           </div>

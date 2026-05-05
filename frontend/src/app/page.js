@@ -1114,6 +1114,9 @@ export default function HomePage() {
             {NAV_ITEMS.find(n => n.id === view)?.label}
           </h2>
           <div className="his-topbar-right">
+            <button className="theme-toggle" onClick={toggleTheme} title={theme === 'dark' ? 'Switch to Light Mode' : 'Switch to Dark Mode'}>
+              {theme === 'dark' ? <Sun size={15} /> : <Moon size={15} />}
+            </button>
             <div className="his-topbar-time">
               <Clock size={13} />
               {currentTime}
